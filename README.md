@@ -55,3 +55,11 @@ We follow agile principles by delivering functionality in iterative sprints:
 
 ## adad
 ## comment
+
+## Group Members
+- **Nidhi Kamath**
+- **Kunal Mahato**
+- **Rajat Nagar**
+- **Rashmi Kulkarni**
+- **Manim Tirkey**
+- **Cheng Chen Huang**
