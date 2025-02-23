@@ -53,9 +53,6 @@ We follow agile principles by delivering functionality in iterative sprints:
    git clone https://github.com/your-repo/upass-manager.git
    cd upass-manager
 
-## adad
-## comment
-
 ## Group Members
 - **Nidhi Kamath**
 - **Kunal Mahato**
