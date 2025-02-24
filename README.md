@@ -26,14 +26,7 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
 - **Testing and Maintenance**  
   Integrate comprehensive end-to-end and regression testing, along with continuous monitoring and maintenance practices, to ensure system stability and prompt issue resolution.
 
-## Agile Development Approach
-We follow agile principles by delivering functionality in iterative sprints:
-- **Sprint 1**: Set up the cloud infrastructure and data ingestion pipeline.
-- **Sprint 2**: Develop secure login, role-based access, and eligibility check features.
-- **Sprint 3**: Implement NFC/QR scanning for pass allocation.
-- **Sprint 4**: Integrate real-time notification services.
-- **Sprint 5**: Build the data analytics dashboard and data export capabilities.
-- **Sprint 6**: Conduct thorough end-to-end testing and set up ongoing maintenance protocols.
+
 
 ## User Roles
 
@@ -60,5 +53,3 @@ We follow agile principles by delivering functionality in iterative sprints:
 - **Rashmi Kulkarni**
 - **Manim Tirkey**
 - **Cheng Chen Huang G**
-
-# comment
