@@ -59,4 +59,4 @@ We follow agile principles by delivering functionality in iterative sprints:
 - **Rajat Nagar**
 - **Rashmi Kulkarni**
 - **Manim Tirkey**
-- **Cheng Chen Huang**
+- **Cheng Chen Huang G**
