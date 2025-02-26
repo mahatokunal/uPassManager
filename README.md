@@ -51,5 +51,5 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
 - **Kunal Mahato**
 - **Rajat Nagar**
 - **Rashmi Kulkarni**
-- **Manim Tirkey - done**
+- **Manim Tirkey**
 - **Cheng Chen Huang G**
