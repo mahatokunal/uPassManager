@@ -46,6 +46,4 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
    git clone https://github.com/your-repo/upass-manager.git
    cd upass-manager
 
-## License
-
-This project is licensed under the [Creative Commons Attribution 4.0 International Public License](https://creativecommons.org/licenses/by/4.0/). Please see the LICENSE.txt file for the full legal text.
+## adad
