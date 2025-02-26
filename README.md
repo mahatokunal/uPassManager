@@ -46,4 +46,6 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
    git clone https://github.com/your-repo/upass-manager.git
    cd upass-manager
 
-## adad
+## Contributors
+
+This project is maintained by the MyProject Contributors. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a full list of contributors.
