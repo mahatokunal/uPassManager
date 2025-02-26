@@ -48,4 +48,4 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
 
 ## Contributors
 
-This project is maintained by the MyProject Contributors. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a full list of contributors.
+This project is maintained by the U-Pass Manager Contributors. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a full list of contributors.
