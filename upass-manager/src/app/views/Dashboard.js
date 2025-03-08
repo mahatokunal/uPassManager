@@ -1,18 +1,6 @@
-"use client";
+import React from 'react';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-
-export default function Home() {
-  const router = useRouter();
-  const [pid, setPid] = useState('');
-
-  const handleLogin = () => {
-    // Add your login logic here
-    // For now, we'll just navigate to the Dashboard
-    router.push('/dashboard');
-  };
-
+const Dashboard = () => {
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="flex flex-col items-center">
@@ -22,8 +10,6 @@ export default function Home() {
             type="text"
             placeholder="Enter PID"
             aria-label="Enter PID"
-            value={pid}
-            onChange={(e) => setPid(e.target.value)}
           />
           <button className="flex-shrink-0 bg-transparent border-none text-gray-700 py-1 px-2">
             <svg
@@ -44,11 +30,12 @@ export default function Home() {
         </div>
         <button
           className="mt-4 bg-[#861F41] text-white font-bold py-2 px-4 rounded"
-          onClick={handleLogin}
         >
-          Login
+          Search
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
