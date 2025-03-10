@@ -2,6 +2,8 @@ import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useRouter } from 'next/navigation';
+import loginImage from '../assets/login_page.png';
+import Image from 'next/image';
 
 const Login = () => {
   const router = useRouter();
@@ -60,7 +62,7 @@ const Login = () => {
           </div>
         </div>
         <div className="w-1/2">
-          <img src="/path/to/your/image.jpg" alt="Login Image" className="object-cover w-full h-full" />
+          <Image src={loginImage} alt="Login Image" className="object-cover w-full h-full" />
         </div>
       </main>
     </div>
