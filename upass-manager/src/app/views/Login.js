@@ -1,6 +1,4 @@
 import React from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useRouter } from 'next/navigation';
 import loginImage from '../assets/login_page.png';
 import Image from 'next/image';
@@ -61,8 +59,8 @@ const Login = () => {
             </form>
           </div>
         </div>
-        <div className="w-1/2">
-          <Image src={loginImage} alt="Login Image" className="object-cover w-full h-full" />
+        <div className="w-1/2 flex items-center justify-center">
+          <Image src={loginImage} alt="Login Image" width={700} height={543} className="object-cover" />
         </div>
       </main>
     </div>
