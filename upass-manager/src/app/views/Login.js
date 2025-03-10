@@ -1,23 +1,24 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import loginImage from '../assets/login_page.png';
+import loginImage from '../assets/images/login-page.png';
 import Image from 'next/image';
 
 const Login = () => {
   const router = useRouter();
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     // Add your login logic here
     // For now, we'll just navigate to the Dashboard
     router.push('/dashboard');
   };
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow flex">
-        <div className="flex w-1/2 items-center justify-center p-8 bg-white rounded shadow-md">
+        <div className="flex w-1/2 items-center justify-center p-8">
           <div className="w-full max-w-md">
-            <h2 className="text-2xl font-bold text-center">Login</h2>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
@@ -51,7 +52,6 @@ const Login = () => {
                 <button
                   type="submit"
                   className="w-full px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={handleLogin}
                 >
                   Login
                 </button>

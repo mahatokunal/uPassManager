@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import logo from '../assets/virginia-tech-logo.png'; // Adjust the path to your logo
+import logo from '../assets/images/virginia-tech-logo.png'; // Adjust the path to your logo
 
 const Header = () => {
   return (
