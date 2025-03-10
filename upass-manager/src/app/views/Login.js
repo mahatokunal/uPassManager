@@ -1,8 +1,16 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    // Add your login logic here
+    // For now, we'll just navigate to the Dashboard
+    router.push('/dashboard');
+  };
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow flex">
@@ -43,6 +51,7 @@ const Login = () => {
                 <button
                   type="submit"
                   className="w-full px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={handleLogin}
                 >
                   Login
                 </button>
