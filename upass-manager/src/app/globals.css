@@ -25,14 +25,14 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@font-face {
+/* @font-face {
   font-family: 'AcherusGrotesque-Bold';
   src: url('../app/assets/fonts/acherus-grotesque-bold.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-}
+} */
 
-@font-face {
+/* @font-face {
   font-family: 'AcherusGrotesque-Regular';
   src: url('/app/assets/fonts/Horizon Type - AcherusGrotesque-Regular.ttf') format('truetype');
   font-weight: normal;
@@ -44,7 +44,7 @@ body {
   src: url('/app/assets/fonts/Horizon Type - AcherusGrotesque-RegularItalic.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-}
+} */
 
 @tailwind base;
 @tailwind components;
