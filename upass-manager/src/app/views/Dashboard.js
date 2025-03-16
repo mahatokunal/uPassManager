@@ -145,10 +145,10 @@ const Dashboard = () => {
                 {card.icon}
               </div>
               <div>
-                <h3 className="text-md font-bold mb-1 text-gray-900">
+                <h3 className="text-md font-bold mb-1 text-gray-900 text-left">
                   {card.title}
                 </h3>
-                <p className="text-gray-700 text-xs">{card.description}</p>
+                <p className="text-gray-700 text-xs text-left">{card.description}</p>
               </div>
             </button>
           ))}
