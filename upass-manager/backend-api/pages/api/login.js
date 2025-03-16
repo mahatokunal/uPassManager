@@ -2,6 +2,9 @@
 import { authenticateUser, generateToken } from '../../../backend-common/auth'; // Adjust the relative path as needed
 
 export default async function handler(req, res) {
+
+  //test comment
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
