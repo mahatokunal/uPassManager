@@ -13,6 +13,7 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
 - [User Guide](UserGuide)
 - [API Documentation](API)
 - [Development Guidelines](Development)
+- [Project Live Demo](LiveDemo)
 
 ## Project Features
 
