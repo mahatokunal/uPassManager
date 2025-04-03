@@ -45,7 +45,7 @@ const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, selectedFile }) 
           >
             Browse
           </label>
-          {selectedFile && <p className="mt-4 text-gray-600">Selected file: {selectedFile.name}</p>}
+          {selectedFile && <p className="mt-4 text-gray-600 items-center justify-center text-center">Selected file: {selectedFile.name}</p>}
         </div>
         <div className="mt-4 flex justify-end space-x-2">
           <button
