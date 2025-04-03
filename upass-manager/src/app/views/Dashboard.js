@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UploadModal from '../components/UploadModal';
 import AWS from 'aws-sdk';
+import {useRouter} from 'next/navigation';
 
 const accessKeyId = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
@@ -15,6 +16,7 @@ const Dashboard = () => {
   const [pid, setPid] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   const cardData = [
     {
@@ -157,6 +159,8 @@ const Dashboard = () => {
               onClick={() => {
                 if (index === 1) {
                   setIsModalOpen(true);
+                } else if (index === 2) {
+                  router.push('/notification');
                 } else {
                   alert("This feature is not yet implemented");
                 }
