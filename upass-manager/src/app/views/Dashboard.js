@@ -19,7 +19,7 @@ const Dashboard = () => {
   const cardData = [
     {
       title: "Add Distributor",
-      description: "The admin can add distributors who can then give access to specific options.",
+      description: "The admin can add distributors who can give access to specific options.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
