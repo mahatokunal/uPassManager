@@ -1,15 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import loginImage from '../assets/images/login-page.png';
 import Image from 'next/image';
 import '../assets/colors/fonts.css';
 
-// TODO: Add your login logic here
-
 const Login = () => {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,11 +26,30 @@ const Login = () => {
     };
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add your login logic here
-    // For now, we'll just navigate to the Dashboard
-    router.push('/dashboard');
+    setError('');
+
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong');
+      }
+
+      // Navigate to the Dashboard upon successful login
+      router.push('/dashboard');
+    } catch (error) {
+      setError("Invalid email or password. Please try again.");
+    }
   };
 
   return (
@@ -38,6 +59,7 @@ const Login = () => {
         <div className="flex w-full md:w-1/2 items-center justify-center p-8">
           <div className="w-full max-w-md">
             <form className="space-y-4" onSubmit={handleLogin}>
+              {error && <p className="text-red-500">{error}</p>}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700" style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '15px' }}>
                   Email
@@ -46,6 +68,8 @@ const Login = () => {
                   type="email"
                   id="email"
                   name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-800"
                   style={{ fontFamily: 'AcherusGrotesque-Regular' }}
@@ -60,6 +84,8 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-800"
                     style={{ fontFamily: 'AcherusGrotesque-Regular' }}
