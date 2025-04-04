@@ -11,7 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [isError, setIsError] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,7 +28,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
 
     try {
       const response = await fetch('/api/login', {
@@ -48,7 +47,7 @@ const Login = () => {
       // Navigate to the Dashboard upon successful login
       router.push('/dashboard');
     } catch (error) {
-      setError("Invalid email or password. Please try again.");
+      setIsError(true);
     }
   };
 
@@ -58,8 +57,15 @@ const Login = () => {
       <main className="flex flex-col md:flex-row items-center justify-center w-full">
         <div className="flex w-full md:w-1/2 items-center justify-center p-8">
           <div className="w-full max-w-md">
+          <div style={{ minHeight: '24px' }}>
+            <p
+              className={`text-center ${isError ? 'text-red-500' : 'text-white'}`}
+              style={{ fontFamily: 'AcherusGrotesque-Regular' }}
+            >
+              {isError ? 'Invalid email or password. Please try again.' : 'Invalid email or password. Please try again.'}
+            </p>
+          </div>
             <form className="space-y-4" onSubmit={handleLogin}>
-              {error && <p className="text-red-500">{error}</p>}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700" style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '15px' }}>
                   Email
