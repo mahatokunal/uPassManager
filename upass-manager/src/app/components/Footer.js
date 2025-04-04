@@ -2,9 +2,9 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-4">
+    <footer className="bg-[#861F41] text-white py-4 shadow-md">
       <div className="container mx-auto text-center">
-        <p>&copy; {new Date().getFullYear()} Virginia Tech. All rights reserved.</p>
+        <p style={{ fontFamily: 'AcherusGrotesque-Regular' }}>&copy; {new Date().getFullYear()} Virginia Tech. All rights reserved.</p>
       </div>
     </footer>
   );

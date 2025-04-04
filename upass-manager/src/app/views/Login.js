@@ -56,15 +56,40 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center">
-      <h1 className="text-3xl font-bold mb-6 text-center" style={{ fontFamily: 'AcherusGrotesque-Bold', fontSize: '40px', color: 'black' }}>Login to U-Pass Manager</h1>
-      <main className="flex flex-col md:flex-row items-center justify-center w-full">
-        <div className="flex w-full md:w-1/2 items-center justify-center p-8">
-          <div className="w-full max-w-md">
-            <form className="space-y-4" onSubmit={handleLogin}>
-              {error && <p className="text-red-500">{error}</p>}
+    <div className="flex flex-col h-full items-center justify-center bg-gradient-to-b from-white to-gray-100 overflow-hidden">
+      <h1 
+        className="text-3xl md:text-4xl font-bold mb-4 text-center text-[#861F41]" 
+        style={{ 
+          fontFamily: 'AcherusGrotesque-Bold', 
+          textShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        Login to U-Pass Manager
+      </h1>
+      <main className="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto px-4">
+        <div className="flex w-full md:w-1/2 items-center justify-center p-2 md:p-4">
+          <div className="w-full max-w-md bg-white p-4 md:p-6 rounded-lg shadow-lg border border-gray-200">
+            <div className="relative w-full h-[60px] mb-2">
+              <div 
+                className="absolute top-0 left-0 right-0 w-full bg-red-50 border-l-4 border-red-500 p-3 shadow-md z-10 overflow-hidden transition-all duration-300"
+                style={{ 
+                  opacity: error ? 1 : 0,
+                  visibility: error ? 'visible' : 'hidden',
+                  transform: error ? 'translateY(0)' : 'translateY(-10px)'
+                }}
+              >
+                <p className="text-red-700 text-sm whitespace-normal break-words" style={{ fontFamily: 'AcherusGrotesque-Regular' }}>
+                  {error || "Invalid email or password. Please try again."}
+                </p>
+              </div>
+            </div>
+            <form className="space-y-6 w-full" onSubmit={handleLogin}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700" style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '15px' }}>
+                <label 
+                  htmlFor="email" 
+                  className="block text-sm font-medium text-gray-700 mb-2" 
+                  style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '16px' }}
+                >
                   Email
                 </label>
                 <input
@@ -74,12 +99,16 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-800"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#861F41] focus:border-[#861F41] text-gray-800 transition-all duration-200"
                   style={{ fontFamily: 'AcherusGrotesque-Regular' }}
                 />
               </div>
               <div className="relative">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700" style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '15px' }}>
+                <label 
+                  htmlFor="password" 
+                  className="block text-sm font-medium text-gray-700 mb-2" 
+                  style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '16px' }}
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -90,12 +119,12 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-800"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#861F41] focus:border-[#861F41] text-gray-800 transition-all duration-200"
                     style={{ fontFamily: 'AcherusGrotesque-Regular' }}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 px-3 py-2 border-l border-black flex items-center"
+                    className="absolute inset-y-0 right-0 px-3 py-2 border-l border-gray-300 flex items-center transition-colors hover:text-[#861F41]"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                     style={{ height: 'calc(95% - 2px)', top: '4px', color: '#6c757d'}}
@@ -114,17 +143,21 @@ const Login = () => {
                   </button>
                 </div>
               </div>
-              <div>
+              <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full text-white bg-[#861F41] hover:bg-[#6e1a34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#861F41]"
-                  style={{ fontFamily: 'AcherusGrotesque-Bold', width: '150px', height: '40px', fontSize: '20px', borderRadius: '15px' }}
+                  className="w-full text-white bg-[#861F41] hover:bg-[#6e1a34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#861F41] py-3 px-6 rounded-md shadow-md transition-all duration-200 transform hover:translate-y-[-2px] active:translate-y-0"
+                  style={{ fontFamily: 'AcherusGrotesque-Bold', fontSize: '18px' }}
                 >
                   Login
                 </button>
               </div>
-              <div className="flex items-center justify-between">
-                <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500" style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '15px' }}>
+              <div className="flex items-center justify-between pt-2">
+                <a 
+                  href="#" 
+                  className="text-sm text-[#861F41] hover:text-[#6e1a34] transition-colors duration-200" 
+                  style={{ fontFamily: 'AcherusGrotesque-Regular', fontSize: '15px' }}
+                >
                   Forgot Password?
                 </a>
               </div>
@@ -132,8 +165,17 @@ const Login = () => {
           </div>
         </div>
         {!isMobile && (
-          <div className="w-full md:w-1/2 flex items-center justify-center p-8">
-            <Image src={loginImage} alt="Login Image" width={700} height={543} className="object-cover" />
+          <div className="w-full md:w-1/2 flex items-center justify-center p-2 md:p-4">
+            <div className="relative rounded-lg overflow-hidden shadow-2xl transform transition-transform duration-300 hover:scale-[1.02] max-h-[60vh]">
+              <Image 
+                src={loginImage} 
+                alt="Login Image" 
+                width={600} 
+                height={450} 
+                className="object-cover h-full w-full"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[rgba(134,31,65,0.3)] to-transparent"></div>
+            </div>
           </div>
         )}
       </main>
