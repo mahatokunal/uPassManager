@@ -45,9 +45,12 @@ const Login = () => {
         throw new Error(data.message || 'Something went wrong');
       }
 
+      // Store user role in localStorage for role-based access control
+      localStorage.setItem('userRole', data.role || 'distributor');
+      
       // Navigate to the Dashboard upon successful login
       router.push('/dashboard');
-    } catch (error) {
+    } catch {
       setError("Invalid email or password. Please try again.");
     }
   };
