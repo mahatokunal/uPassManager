@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { maskPid } from '../utils/maskPid';
 
 const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   const [upassId, setUpassId] = useState('');
@@ -56,7 +57,7 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
             </p>
             <div className="bg-gray-100 p-3 rounded">
               <p><span className="font-medium">Name:</span> {studentInfo.First_Name} {studentInfo.Last_Name}</p>
-              <p><span className="font-medium">PID:</span> {studentInfo.ID_Number}</p>
+              <p><span className="font-medium">PID:</span> {maskPid(studentInfo.Student_ID)}</p>
               <p><span className="font-medium">Email:</span> {studentInfo.Email}</p>
             </div>
           </div>

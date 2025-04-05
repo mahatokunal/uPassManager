@@ -34,7 +34,7 @@ export default async function handler(req, res) {
   try {
     // First check if the disclaimer is signed
     const [checkRows] = await pool.query(
-      'SELECT Disclaimer_Signed FROM u_pass_manager WHERE ID_Number = ?',
+      'SELECT Disclaimer_Signed FROM u_pass_manager WHERE Student_ID = ?',
       [pid]
     );
     
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     
     // Update the Active_U_Pass_Card field with the new U-Pass ID (as a number)
     const [result] = await pool.query(
-      'UPDATE u_pass_manager SET Active_U_Pass_Card = ? WHERE ID_Number = ?',
+      'UPDATE u_pass_manager SET Active_U_Pass_Card = ? WHERE Student_ID = ?',
       [numericUpassId, pid]
     );
 

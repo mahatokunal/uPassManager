@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { maskPid } from '../utils/maskPid';
 
 const DisclaimerModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   if (!isOpen) return null;
@@ -17,7 +18,7 @@ const DisclaimerModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
             </p>
             <div className="bg-gray-100 p-3 rounded">
               <p><span className="font-medium">Name:</span> {studentInfo.First_Name} {studentInfo.Last_Name}</p>
-              <p><span className="font-medium">PID:</span> {studentInfo.ID_Number}</p>
+              <p><span className="font-medium">Student ID:</span> {maskPid(studentInfo.Student_ID)}</p>
               <p><span className="font-medium">Email:</span> {studentInfo.Email}</p>
             </div>
           </div>
