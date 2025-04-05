@@ -36,7 +36,6 @@ const Notifications = () => {
   const [sendingNotification, setSendingNotification] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [filters, setFilters] = useState({
-    Student_ID: '',
     First_Name: '',
     Last_Name: '',
     Email: '',
@@ -210,7 +209,6 @@ const Notifications = () => {
 
   const resetFilters = () => {
     setFilters({
-      Student_ID: '',
       First_Name: '',
       Last_Name: '',
       Email: '',
@@ -298,17 +296,6 @@ const Notifications = () => {
           {showFilters && (
             <div className="bg-white shadow-md rounded-lg p-4 mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">PID</label>
-                  <input
-                    type="text"
-                    value={filters.Student_ID}
-                    onChange={(e) => handleFilterChange('Student_ID', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#861F41]"
-                    placeholder="Filter by PID"
-                  />
-                </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                   <input

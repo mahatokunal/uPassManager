@@ -4,7 +4,7 @@ This page provides access to the current progress and demonstrations of the UPas
 
 ## Current Progress Demo
 
-The current progress of the project has been uploaded [here](https://drive.google.com/file/d/1f4L-cfSg4PpBQ6LzkSzxb0INHclgWtwW/view?usp=drive_link).
+The current progress of the project has been uploaded [here](placeholder-for-new-demo-link).
 
 ## Demo Features
 
@@ -14,7 +14,17 @@ The live demo showcases the following features of the UPassManager system:
 - Student eligibility verification
 - U-Pass card issuance process
 - Administrator dashboard and reporting
-- Real-time notifications
+- Real-time notifications via AWS SES
+- Streamlined filtering interface with improved usability
+
+## Latest Enhancements
+
+Our most recent updates include:
+
+- **AWS SES Integration**: Implemented secure email notifications using Amazon Simple Email Service
+- **Improved Notification Interface**: Simplified the filtering system by removing unnecessary PID filters
+- **Enhanced User Experience**: Streamlined the notification workflow for administrators
+- **Secure Cloud Integration**: Leveraged AWS Lambda for scalable, serverless email processing
 
 ## Accessing the Demo
 
