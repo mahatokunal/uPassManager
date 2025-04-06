@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UploadModal from '../components/UploadModal';
 import DisclaimerModal from '../components/DisclaimerModal';
 import NFCModal from '../components/NFCModal';
+import AddDistributorModal from '../components/AddDistributorModal';
+import { maskPid } from '../utils/maskPid';
 import AWS from 'aws-sdk';
 const accessKeyId = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
@@ -13,6 +16,7 @@ const region = process.env.NEXT_PUBLIC_REGION;
 const bucketName = process.env.NEXT_PUBLIC_S3_BUCKET_NAME;
 
 const Dashboard = () => {
+  const router = useRouter();
   const [userRole, setUserRole] = useState('');
   const [pid, setPid] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -26,22 +30,29 @@ const Dashboard = () => {
   const [isNFCModalOpen, setIsNFCModalOpen] = useState(false);
   const [isAllocatingUPass, setIsAllocatingUPass] = useState(false);
   const [allocateSuccess, setAllocateSuccess] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isAddDistributorModalOpen, setIsAddDistributorModalOpen] = useState(false);
+  const [addDistributorSuccess, setAddDistributorSuccess] = useState(false);
   
-  // Get user role from localStorage on component mount
+  // Get user role from localStorage on component mount and check if user is logged in
   useEffect(() => {
-    // Default to 'distributor' if no role is found
+    // Check if user is logged in
     const role = localStorage.getItem('userRole');
     console.log('Retrieved user role:', role);
     
-    // Set a default role if none is found
     if (!role) {
-      console.log('No role found, defaulting to distributor');
-      localStorage.setItem('userRole', 'distributor');
-      setUserRole('distributor');
-    } else {
-      setUserRole(role);
+      // User is not logged in, redirect to login page
+      console.log('No role found, redirecting to login page');
+      router.push('/');
+      return;
     }
-  }, []);
+    
+    // User is logged in, set the role
+    setUserRole(role);
+    
+    // Mark initialization as complete
+    setIsInitializing(false);
+  }, [router]);
 
   const cardData = [
     {
@@ -116,7 +127,7 @@ const Dashboard = () => {
   }, [searchResult]);
 
   const handleAllocateUPass = (upassId) => {
-    if (!searchResult || !searchResult.ID_Number) return;
+    if (!searchResult || !searchResult.Student_ID) return;
     
     setIsAllocatingUPass(true);
     setError(null);
@@ -127,7 +138,7 @@ const Dashboard = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
-        pid: searchResult.ID_Number,
+        pid: searchResult.Student_ID,
         upassId: upassId
       }),
     })
@@ -140,7 +151,7 @@ const Dashboard = () => {
       }
       
       // Refresh the data to get the updated record
-      return fetch(`/api/search-by-pid?pid=${searchResult.ID_Number}`)
+      return fetch(`/api/search-by-pid?pid=${searchResult.Student_ID}`)
         .then(refreshResponse => refreshResponse.json())
         .then(refreshData => {
           // Update with fresh data from the database
@@ -160,20 +171,20 @@ const Dashboard = () => {
   };
 
   const handleDisclaimerConfirm = async () => {
-    if (!searchResult || !searchResult.ID_Number) return;
+    if (!searchResult || !searchResult.Student_ID) return;
     
     setIsUpdatingDisclaimer(true);
     setError(null);
     
     try {
-      console.log('Sending update request for PID:', searchResult.ID_Number);
+      console.log('Sending update request for PID:', searchResult.Student_ID);
       
       const response = await fetch('/api/update-disclaimer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ pid: searchResult.ID_Number }),
+        body: JSON.stringify({ pid: searchResult.Student_ID }),
       });
       
       const data = await response.json();
@@ -184,7 +195,7 @@ const Dashboard = () => {
       }
       
       // Refresh the data to get the updated record
-      const refreshResponse = await fetch(`/api/search-by-pid?pid=${searchResult.ID_Number}`);
+      const refreshResponse = await fetch(`/api/search-by-pid?pid=${searchResult.Student_ID}`);
       const refreshData = await refreshResponse.json();
       
       if (!refreshResponse.ok) {
@@ -207,6 +218,14 @@ const Dashboard = () => {
       setIsUpdatingDisclaimer(false);
       setIsDisclaimerModalOpen(false);
     }
+  };
+
+  const handleAddDistributor = (email) => {
+    console.log('Adding distributor with email:', email);
+    // Here you would typically make an API call to add the distributor
+    // For now, we'll just show a success message
+    setAddDistributorSuccess(true);
+    setTimeout(() => setAddDistributorSuccess(false), 3000);
   };
 
   const handleUpload = async () => {
@@ -244,16 +263,24 @@ const Dashboard = () => {
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
       <main className="flex-grow flex flex-col items-center justify-center mx-auto px-10 py-1">
-        {/* Search functionality - only visible for distributors */}
-        {(userRole === 'distributor' || !userRole) && (
+        {/* Show loading indicator while initializing */}
+        {isInitializing ? (
+          <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#861F41] mb-4"></div>
+            <p className="text-gray-600">Loading dashboard...</p>
+          </div>
+        ) : (
+          <>
+            {/* Search functionality - only visible for distributors */}
+            {userRole === 'distributor' && (
           <>
             <div className="flex flex-col items-center w-full max-w-lg mx-auto mb-6">
               <div className="flex items-center border border-gray-300 rounded-full py-2 px-4 w-full" style={{ minHeight: '50px' }}>
                 <input
                   className="appearance-none bg-transparent border-none w-full text-gray-700 py-1 px-2 leading-tight focus:outline-none"
                   type="text"
-                  placeholder="Enter PID"
-                  aria-label="Enter PID"
+                  placeholder="Enter Student ID"
+                  aria-label="Enter Student ID"
                   value={pid}
                   onChange={(e) => setPid(e.target.value)}
                 />
@@ -323,10 +350,10 @@ const Dashboard = () => {
                     <p className="text-sm text-gray-500">U-Pass ID</p>
                     <p className="font-medium">{searchResult.U_Pass_ID}</p>
                   </div>
-                  <div className="col-span-2 sm:col-span-1">
-                    <p className="text-sm text-gray-500">PID</p>
-                    <p className="font-medium">{searchResult.ID_Number}</p>
-                  </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <p className="text-sm text-gray-500">Student ID</p>
+                        <p className="font-medium">{maskPid(searchResult.Student_ID)}</p>
+                      </div>
                   <div className="col-span-2 sm:col-span-1">
                     <p className="text-sm text-gray-500">Name</p>
                     <p className="font-medium">{searchResult.First_Name} {searchResult.Last_Name}</p>
@@ -380,22 +407,27 @@ const Dashboard = () => {
               </div>
             )}
             
-            {searchResult && searchResult.Disclaimer_Signed && (
+            {searchResult && (
               <div className="mt-4 flex justify-center w-full max-w-lg">
                 <button
-                  onClick={() => setIsNFCModalOpen(true)}
-                  disabled={isAllocatingUPass}
-                  className="bg-[#861F41] text-white font-bold py-2 px-6 rounded w-full"
+                  onClick={() => searchResult.Disclaimer_Signed && setIsNFCModalOpen(true)}
+                  disabled={isAllocatingUPass || !searchResult.Disclaimer_Signed}
+                  className={`font-bold py-2 px-6 rounded w-full ${
+                    searchResult.Disclaimer_Signed 
+                      ? 'bg-[#861F41] text-white hover:bg-[#6e1935]' 
+                      : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                  }`}
+                  title={!searchResult.Disclaimer_Signed ? "Disclaimer must be signed before allocating U-Pass" : ""}
                 >
                   {isAllocatingUPass ? 'Allocating...' : 'Allocate U-Pass'}
                 </button>
               </div>
             )}
           </>
-        )}
+            )}
 
-        {/* Admin buttons - only visible for admins */}
-        {userRole === 'admin' && (
+            {/* Admin buttons - only visible for admins */}
+            {userRole === 'admin' && (
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-2xl mx-auto">
             {cardData.map((card, index) => (
               <button
@@ -403,13 +435,14 @@ const Dashboard = () => {
                 className="flex items-center p-3 bg-white shadow-md border border-gray-100 rounded-full cursor-pointer"
                 style={{ borderRadius: '50px' }}
                 onClick={() => {
-                  if (index === 1) {
+                  if (index === 0) {
+                    // Open Add Distributor modal
+                    setIsAddDistributorModalOpen(true);
+                  } else if (index === 1) {
                     setIsModalOpen(true);
                   } else if (index === 2) {
                     // Navigate to the notifications page
-                    window.location.href = '/notifications';
-                  } else {
-                    alert("This feature is not yet implemented");
+                    router.push('/notifications');
                   }
                 }}
               >
@@ -425,6 +458,8 @@ const Dashboard = () => {
               </button>
             ))}
           </div>
+            )}
+          </>
         )}
       </main>
       <Footer />
@@ -439,6 +474,12 @@ const Dashboard = () => {
       {allocateSuccess && (
         <div className="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
           <p>U-Pass allocated successfully!</p>
+        </div>
+      )}
+
+      {addDistributorSuccess && (
+        <div className="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          <p>Distributor added successfully!</p>
         </div>
       )}
 
@@ -462,6 +503,12 @@ const Dashboard = () => {
         onClose={() => setIsNFCModalOpen(false)}
         onConfirm={handleAllocateUPass}
         studentInfo={searchResult}
+      />
+      
+      <AddDistributorModal
+        isOpen={isAddDistributorModalOpen}
+        onClose={() => setIsAddDistributorModalOpen(false)}
+        onConfirm={handleAddDistributor}
       />
     </div>
   );

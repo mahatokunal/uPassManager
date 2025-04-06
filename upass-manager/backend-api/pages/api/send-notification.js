@@ -1,5 +1,27 @@
 // backend-api/pages/api/send-notification.js
 import pool from '../../db';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Initialize Lambda client
+const lambda = new LambdaClient({ 
+  region: process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS_REGION || "us-east-2",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
+  }
+});
+
+// Log credential information for debugging (redacted for security)
+console.log('AWS Region:', process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS_REGION || "us-east-2");
+console.log('AWS Access Key ID:', process.env.AWS_ACCESS_KEY_ID ? '***' + process.env.AWS_ACCESS_KEY_ID.slice(-5) : 'Not found');
+console.log('NEXT_PUBLIC_AWS_ACCESS_KEY_ID:', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ? '***' + process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID.slice(-5) : 'Not found');
+
+// Lambda function name
+const LAMBDA_FUNCTION_NAME = process.env.LAMBDA_FUNCTION_NAME || 'CS5934_G6_SES';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -17,32 +39,54 @@ export default async function handler(req, res) {
   }
   
   try {
-    // In a real application, this would send emails or other notifications
-    // For this demo, we'll just log the notifications and return success
-    
-    console.log('Sending notifications:');
+    console.log('Sending notifications via Lambda:');
     console.log('Message:', message);
     console.log('Recipients:', recipients);
     
-    // Simulate a database operation to record the notifications
+    // Prepare the payload for the Lambda function
+    const payload = {
+      recipients: recipients,
+      message: message
+    };
+    
+    // Invoke the Lambda function
+    const command = new InvokeCommand({
+      FunctionName: LAMBDA_FUNCTION_NAME,
+      Payload: JSON.stringify(payload),
+      InvocationType: 'RequestResponse' // Wait for the response
+    });
+    
+    console.log(`Invoking Lambda function: ${LAMBDA_FUNCTION_NAME}`);
+    const response = await lambda.send(command);
+    
+    // Parse the Lambda response
+    const responsePayload = JSON.parse(Buffer.from(response.Payload).toString());
+    console.log('Lambda response:', responsePayload);
+    
+    if (response.StatusCode !== 200) {
+      throw new Error(`Lambda function returned status code ${response.StatusCode}`);
+    }
+    
+    if (responsePayload.statusCode !== 200) {
+      throw new Error(responsePayload.body ? JSON.parse(responsePayload.body).message : 'Lambda function failed');
+    }
+    
+    // Extract the result from the Lambda response
+    const result = responsePayload.body ? JSON.parse(responsePayload.body) : {};
     const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
     
-    // For each recipient, record the notification in the database
-    // In a real app, you might have a notifications table
-    // Here we're just simulating the operation
-    const successCount = recipients.length;
-    
     return res.status(200).json({
-      message: 'Notifications sent successfully',
+      message: 'Notifications sent successfully via Lambda',
       success: true,
-      sent: successCount,
-      total: recipients.length,
+      sent: result.sent || 0,
+      total: result.total || 0,
+      errors: result.errors,
       timestamp
     });
   } catch (error) {
-    console.error('Error sending notifications:', error);
+    console.error('Error invoking Lambda function:', error);
     return res.status(500).json({ 
-      message: 'Internal server error', 
+      message: 'Failed to send notifications via Lambda', 
       error: error.message 
     });
   }

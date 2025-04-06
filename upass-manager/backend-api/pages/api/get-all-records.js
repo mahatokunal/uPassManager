@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   // Get filter parameters
   const filters = {};
   const possibleFilters = [
-    'ID_Number', 'First_Name', 'Last_Name', 'Email', 
+    'Student_ID', 'First_Name', 'Last_Name', 'Email',
     'Active_U_Pass_Card', 'Disclaimer_Signed', 'Metro_Acct',
     'Distribution_Date', 'Picked_Up_By'
   ];
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     const query = `
       SELECT * FROM u_pass_manager 
       ${whereClause} 
-      ORDER BY ID_Number 
+      ORDER BY Student_ID
       LIMIT ? OFFSET ?
     `;
     

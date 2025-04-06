@@ -1,13 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { maskPid } from '../utils/maskPid';
 
 const Notifications = () => {
+  const router = useRouter();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+  
+  // Check if user is logged in
+  useEffect(() => {
+    const userRole = localStorage.getItem('userRole');
+    if (!userRole) {
+      // User is not logged in, redirect to login page
+      router.push('/');
+      return;
+    }
+    
+    // User is logged in, continue loading the page
+    setCheckingSession(false);
+  }, [router]);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -19,7 +36,6 @@ const Notifications = () => {
   const [sendingNotification, setSendingNotification] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [filters, setFilters] = useState({
-    ID_Number: '',
     First_Name: '',
     Last_Name: '',
     Email: '',
@@ -31,7 +47,7 @@ const Notifications = () => {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState({
-    ID_Number: true,
+    Student_ID: true,
     First_Name: true,
     Last_Name: true,
     Email: true,
@@ -48,7 +64,7 @@ const Notifications = () => {
 
   // Column definitions with display names
   const columnDefs = [
-    { key: 'ID_Number', label: 'PID' },
+    { key: 'Student_ID', label: 'Student_ID' },
     { key: 'First_Name', label: 'First Name' },
     { key: 'Last_Name', label: 'Last Name' },
     { key: 'Email', label: 'Email' },
@@ -125,7 +141,7 @@ const Notifications = () => {
     if (selectedRecords.length === records.length) {
       setSelectedRecords([]);
     } else {
-      setSelectedRecords(records.map(record => record.ID_Number));
+      setSelectedRecords(records.map(record => record.Student_ID));
     }
   };
 
@@ -193,7 +209,6 @@ const Notifications = () => {
 
   const resetFilters = () => {
     setFilters({
-      ID_Number: '',
       First_Name: '',
       Last_Name: '',
       Email: '',
@@ -212,6 +227,22 @@ const Notifications = () => {
     }));
   };
 
+  // If still checking session, show loading spinner
+  if (checkingSession) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#861F41] mb-4"></div>
+            <p className="text-gray-600">Loading notifications...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
@@ -219,7 +250,7 @@ const Notifications = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-[#861F41]">Send Notifications</h1>
           <button 
-            onClick={() => window.location.href = '/dashboard'}
+            onClick={() => router.push('/dashboard')}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
           >
             Back to Dashboard
@@ -265,17 +296,6 @@ const Notifications = () => {
           {showFilters && (
             <div className="bg-white shadow-md rounded-lg p-4 mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">PID</label>
-                  <input
-                    type="text"
-                    value={filters.ID_Number}
-                    onChange={(e) => handleFilterChange('ID_Number', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#861F41]"
-                    placeholder="Filter by PID"
-                  />
-                </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                   <input
@@ -421,18 +441,18 @@ const Notifications = () => {
                   </tr>
                 ) : (
                   records.map((record) => (
-                    <tr key={record.ID_Number} className="hover:bg-gray-50">
+                    <tr key={record.Student_ID} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
                           className="h-4 w-4 text-[#861F41] focus:ring-[#861F41] border-gray-300 rounded"
-                          checked={selectedRecords.includes(record.ID_Number)}
-                          onChange={() => handleSelectRecord(record.ID_Number)}
+                          checked={selectedRecords.includes(record.Student_ID)}
+                          onChange={() => handleSelectRecord(record.Student_ID)}
                         />
                       </td>
-                      {visibleColumns.ID_Number && (
+                      {visibleColumns.Student_ID && (
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {record.ID_Number}
+                          {maskPid(record.Student_ID)}
                         </td>
                       )}
                       {visibleColumns.First_Name && (

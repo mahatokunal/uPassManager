@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import loginImage from '../assets/images/login-page.png';
 import Image from 'next/image';
 import '../assets/colors/fonts.css';
@@ -12,6 +13,22 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  const pathname = usePathname();
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const userRole = localStorage.getItem('userRole');
+    if (userRole) {
+      // User is already logged in, redirect to dashboard
+      router.push('/dashboard');
+    } else {
+      // User is not logged in, allow access to login page
+      setCheckingSession(false);
+    }
+  }, [router]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,9 +43,18 @@ const Login = () => {
     };
   }, []);
 
+  // Effect to detect when navigation to dashboard is complete
+  useEffect(() => {
+    // If we're no longer on the login page and loading is true, set loading to false
+    if (pathname !== '/' && loading) {
+      setLoading(false);
+    }
+  }, [pathname, loading]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const response = await fetch('/api/login', {
@@ -49,11 +75,27 @@ const Login = () => {
       localStorage.setItem('userRole', data.role || 'distributor');
       
       // Navigate to the Dashboard upon successful login
+      // Loading state will be turned off by the useEffect when navigation completes
       router.push('/dashboard');
     } catch {
+      // Only set loading to false on error
+      setLoading(false);
       setError("Invalid email or password. Please try again.");
     }
+    // Removed the finally block - loading will be set to false when navigation completes
   };
+
+  // If still checking session, show loading spinner
+  if (checkingSession) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center bg-gradient-to-b from-white to-gray-100 overflow-hidden">
+        <div className="flex flex-col items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#861F41] mb-4"></div>
+          <p className="text-gray-600">Checking session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full items-center justify-center bg-gradient-to-b from-white to-gray-100 overflow-hidden">
@@ -146,10 +188,18 @@ const Login = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full text-white bg-[#861F41] hover:bg-[#6e1a34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#861F41] py-3 px-6 rounded-md shadow-md transition-all duration-200 transform hover:translate-y-[-2px] active:translate-y-0"
+                  disabled={loading}
+                  className="w-full text-white bg-[#861F41] hover:bg-[#6e1a34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#861F41] py-3 px-6 rounded-md shadow-md transition-all duration-200 transform hover:translate-y-[-2px] active:translate-y-0 flex items-center justify-center"
                   style={{ fontFamily: 'AcherusGrotesque-Bold', fontSize: '18px' }}
                 >
-                  Login
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-3"></div>
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    'Login'
+                  )}
                 </button>
               </div>
               <div className="flex items-center justify-between pt-2">
