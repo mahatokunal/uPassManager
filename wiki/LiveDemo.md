@@ -38,4 +38,4 @@ This page will be updated with new demos as additional features are implemented 
 
 ## Feedback
 
-After viewing the demo, we welcome feedback and suggestions. Please contact the project team or use the issue tracker in the GitLab repository to provide your input.
+After viewing the demo, we welcome your feedback and suggestions. Please contact the project team or use the issue tracker in the GitLab repository to provide your input.
