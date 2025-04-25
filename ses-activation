@@ -1,0 +1,96 @@
+const mysql = require("mysql2/promise");
+const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
+
+// Initialize SES client for SDK v3
+const ses = new SESClient({ region: "us-east-2" });
+
+const {
+  DB_HOST,
+  DB_USER,
+  DB_PASS,
+  DB_NAME
+} = process.env;
+
+const SOURCE_EMAIL = 'rashmidk1234@vt.edu'; // Your verified sender email
+
+exports.handler = async (event) => {
+  let connection;
+  let sentCount = 0;
+
+  try {
+    // Connect to RDS MySQL
+    connection = await mysql.createConnection({
+      host: DB_HOST,
+      user: DB_USER,
+      password: DB_PASS,
+      database: DB_NAME
+    });
+
+    // Query @vt.edu student emails
+    const [rows] = await connection.execute(`
+      SELECT Email, First_Name, Last_Name 
+      FROM u_pass_manager 
+      WHERE Email LIKE '%@vt.edu'
+    `);
+
+    // Loop through results and send emails
+    for (const row of rows) {
+      const recipientEmail = row.Email;
+      const fullName = `${row.First_Name} ${row.Last_Name}`;
+      console.log(`⏩ Sending to ${recipientEmail} from ${SOURCE_EMAIL}`);
+      await sendEmail(recipientEmail, fullName);
+      sentCount++;
+
+      // SES rate limit: 1 email per second
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ success: true, message: `✅ Sent ${sentCount} emails.` })
+    };
+
+  } catch (err) {
+    console.error('❌ Error:', err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ success: false, error: err.message })
+    };
+  } finally {
+    if (connection) await connection.end();
+  }
+};
+
+// Send an email using SES v3
+async function sendEmail(toAddress, fullName) {
+  console.log(`📨 Inside sendEmail → Preparing to send to ${toAddress} for ${fullName}`);
+
+  const subject = "U-Pass Notification: Important Update";
+  const bodyText = `
+Hi ${fullName},
+
+This is an official notification from the U-Pass Program Team.
+
+Please review your U-Pass details and ensure you have signed the necessary disclaimer. Contact the front desk if you need assistance.
+
+Thank you,  
+U-Pass Management
+`;
+
+  const params = {
+    Source: SOURCE_EMAIL,
+    Destination: {
+      ToAddresses: [toAddress]
+    },
+    Message: {
+      Subject: { Data: subject },
+      Body: {
+        Text: { Data: bodyText }
+      }
+    }
+  };
+
+  const command = new SendEmailCommand(params);
+  const result = await ses.send(command);
+  console.log(`✅ Email sent to ${toAddress}, Message ID: ${result.MessageId}`);
+}
