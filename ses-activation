@@ -11,14 +11,14 @@ const {
   DB_NAME
 } = process.env;
 
-const SOURCE_EMAIL = 'rashmidk1234@vt.edu'; // Your verified sender email
+const SOURCE_EMAIL = 'rashmidk1234@vt.edu'; 
 
 exports.handler = async (event) => {
   let connection;
   let sentCount = 0;
 
   try {
-    // Connect to RDS MySQL
+
     connection = await mysql.createConnection({
       host: DB_HOST,
       user: DB_USER,
@@ -26,14 +26,13 @@ exports.handler = async (event) => {
       database: DB_NAME
     });
 
-    // Query @vt.edu student emails
+
     const [rows] = await connection.execute(`
       SELECT Email, First_Name, Last_Name 
       FROM u_pass_manager 
       WHERE Email LIKE '%@vt.edu'
     `);
 
-    // Loop through results and send emails
     for (const row of rows) {
       const recipientEmail = row.Email;
       const fullName = `${row.First_Name} ${row.Last_Name}`;
@@ -41,7 +40,6 @@ exports.handler = async (event) => {
       await sendEmail(recipientEmail, fullName);
       sentCount++;
 
-      // SES rate limit: 1 email per second
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
@@ -61,7 +59,6 @@ exports.handler = async (event) => {
   }
 };
 
-// Send an email using SES v3
 async function sendEmail(toAddress, fullName) {
   console.log(`📨 Inside sendEmail → Preparing to send to ${toAddress} for ${fullName}`);
 
