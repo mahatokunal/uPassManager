@@ -11,6 +11,15 @@ export default async function handler(req, res) {
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
   
+  // Get table parameter from query string (default to u_pass_manager_current)
+  const table = req.query.table || 'u_pass_manager_current';
+  
+  // Validate table name to prevent SQL injection
+  const validTables = ['u_pass_manager_current', 'u_pass_manager_fall_2024', 'u_pass_manager_spring_2024'];
+  if (!validTables.includes(table)) {
+    return res.status(400).json({ message: 'Invalid table name' });
+  }
+  
   // Get filter parameters
   const filters = {};
   const possibleFilters = [
@@ -56,13 +65,13 @@ export default async function handler(req, res) {
   
   try {
     // Get total count of filtered records
-    const countQuery = `SELECT COUNT(*) as total FROM u_pass_manager ${whereClause}`;
+    const countQuery = `SELECT COUNT(*) as total FROM ${table} ${whereClause}`;
     const [countResult] = await pool.query(countQuery, whereParams);
     const totalRecords = countResult[0].total;
     
     // Get paginated and filtered records
     const query = `
-      SELECT * FROM u_pass_manager 
+      SELECT * FROM ${table} 
       ${whereClause} 
       ORDER BY Student_ID
       LIMIT ? OFFSET ?
