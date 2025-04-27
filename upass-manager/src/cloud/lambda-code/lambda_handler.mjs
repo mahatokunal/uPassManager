@@ -35,12 +35,12 @@ export const handler = async (event) => {
     console.log(`Processing file: ${filename}`);
     
     // Determine which table to update based on the filename
-    let tableName = 'u_pass_manager'; // Default table
+    let tableName = 'u_pass_manager_current'; // Default table
     
-    if (filename.includes('Mockup_Data_UPass_last')) {
-      tableName = 'u_pass_manager_last';
-    } else if (filename.includes('Mockup_Data_UPass_lastest')) {
-      tableName = 'u_pass_manager_lastest';
+    if (filename.includes('Mockup_Data_UPass_Fall_2024')) {
+      tableName = 'u_pass_manager_fall_2024';
+    } else if (filename.includes('Mockup_Data_UPass_Spring_2024')) {
+      tableName = 'u_pass_manager_spring_2024';
     } else if (!filename.includes('Mockup_Data_UPass')) {
       console.log(`Unrecognized file pattern: ${filename}, using default table.`);
     }
