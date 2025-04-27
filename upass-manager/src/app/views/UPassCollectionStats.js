@@ -21,6 +21,9 @@ const UPassCollectionStats = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState('current');
   
+  // Add a key state to force re-render of charts when semester changes
+  const [chartKey, setChartKey] = useState(0);
+  
   // Chart colors
   const COLORS = ['#861F41', '#CF4420', '#E87722', '#FFC82E', '#6EAE50'];
   
@@ -80,6 +83,8 @@ const UPassCollectionStats = () => {
   useEffect(() => {
     if (currentData.length > 0 || fall2024Data.length > 0 || spring2024Data.length > 0) {
       applyFilters();
+      // Increment chart key to force re-render of charts
+      setChartKey(prevKey => prevKey + 1);
     }
   }, [selectedSemester, currentData, fall2024Data, spring2024Data]);
   
@@ -122,9 +127,33 @@ const UPassCollectionStats = () => {
   
   // Generate pie chart data for disclaimer signed status
   const generateDisclaimerSignedData = () => {
-    const signedCount = filteredData.filter(record => record.Disclaimer_Signed).length;
-    const notSignedCount = filteredData.filter(record => !record.Disclaimer_Signed).length;
-    const totalCount = signedCount + notSignedCount;
+    // Handle different possible values for Disclaimer_Signed
+    const signedCount = filteredData.filter(record => {
+      if (record.Disclaimer_Signed === null || record.Disclaimer_Signed === undefined) {
+        return false;
+      }
+      
+      // Handle string values like "Yes" or "No"
+      if (typeof record.Disclaimer_Signed === 'string') {
+        return record.Disclaimer_Signed.toLowerCase() === 'yes';
+      }
+      
+      // Handle numeric values (0 or 1)
+      if (typeof record.Disclaimer_Signed === 'number') {
+        return record.Disclaimer_Signed === 1;
+      }
+      
+      // Handle boolean values
+      if (typeof record.Disclaimer_Signed === 'boolean') {
+        return record.Disclaimer_Signed;
+      }
+      
+      // Default case
+      return Boolean(record.Disclaimer_Signed);
+    }).length;
+    
+    const notSignedCount = filteredData.length - signedCount;
+    const totalCount = filteredData.length;
     
     const signedPercentage = totalCount > 0 ? (signedCount / totalCount) * 100 : 0;
     const notSignedPercentage = totalCount > 0 ? (notSignedCount / totalCount) * 100 : 0;
@@ -295,179 +324,187 @@ const UPassCollectionStats = () => {
                 </p>
               </div>
               
-              {/* Chart Selection Tabs */}
-              <div className="mb-6">
-                <h3 className="text-md font-semibold mb-4">Select Chart Type</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-white border border-gray-300 rounded-lg p-4">
-                    <h4 className="font-bold text-center mb-2">U-Pass Collection</h4>
-                    <p className="text-sm text-gray-600 text-center">Shows the percentage of students who have collected their U-Pass cards.</p>
+              {/* Chart Grid with Sections and Charts */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+                {/* U-Pass Collection Section */}
+                <div className="bg-white border border-gray-300 rounded-lg p-4">
+                  <h4 className="font-bold text-center mb-4">U-Pass Collection</h4>
+                  <p className="text-sm text-gray-600 text-center mb-4">Shows the percentage of students who have collected their U-Pass cards.</p>
+                  
+                  {/* U-Pass Collection Pie Chart */}
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          key={`upass-collection-${chartKey}`}
+                          data={generateUPassCollectionData()}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={renderCustomizedLabel}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          animationBegin={0}
+                          animationDuration={1000}
+                        >
+                          {generateUPassCollectionData().map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
-                  <div className="bg-white border border-gray-300 rounded-lg p-4">
-                    <h4 className="font-bold text-center mb-2">Disclaimer Signed</h4>
-                    <p className="text-sm text-gray-600 text-center">Shows the percentage of students who have signed the disclaimer.</p>
-                  </div>
-                  <div className="bg-white border border-gray-300 rounded-lg p-4">
-                    <h4 className="font-bold text-center mb-2">Replacement Status</h4>
-                    <p className="text-sm text-gray-600 text-center">Shows the percentage of active U-Pass users who have replacements.</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* U-Pass Collection Pie Chart */}
-              <div className="mb-8">
-                <h3 className="text-md font-semibold mb-4 text-center">U-Pass Collection Status</h3>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={generateUPassCollectionData()}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={renderCustomizedLabel}
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {generateUPassCollectionData().map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-4 max-w-md mx-auto">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-bold">Collected:</span> {
-                        filteredData.filter(record => record.Active_U_Pass_Card).length
-                      }
-                    </p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-bold">Not Collected:</span> {
-                        filteredData.filter(record => !record.Active_U_Pass_Card).length
-                      }
-                    </p>
+                  
+                  {/* U-Pass Collection Stats */}
+                  <div className="mt-4 grid grid-cols-1 gap-2">
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-700 text-sm">
+                        <span className="font-bold">Collected:</span> {
+                          filteredData.filter(record => record.Active_U_Pass_Card).length
+                        }
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-700 text-sm">
+                        <span className="font-bold">Not Collected:</span> {
+                          filteredData.filter(record => !record.Active_U_Pass_Card).length
+                        }
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Disclaimer Signed Pie Chart */}
-              <div className="mb-8">
-                <h3 className="text-md font-semibold mb-4 text-center">Disclaimer Signed Status</h3>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={generateDisclaimerSignedData()}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={renderCustomizedLabel}
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {generateDisclaimerSignedData().map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-4 max-w-md mx-auto">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-bold">Signed:</span> {
-                        filteredData.filter(record => record.Disclaimer_Signed).length
-                      }
-                    </p>
+                
+                {/* Disclaimer Signed Section */}
+                <div className="bg-white border border-gray-300 rounded-lg p-4">
+                  <h4 className="font-bold text-center mb-4">Disclaimer Signed</h4>
+                  <p className="text-sm text-gray-600 text-center mb-4">Shows the percentage of students who have signed the disclaimer.</p>
+                  
+                  {/* Disclaimer Signed Pie Chart */}
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          key={`disclaimer-signed-${chartKey}`}
+                          data={generateDisclaimerSignedData()}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={renderCustomizedLabel}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          animationBegin={0}
+                          animationDuration={1000}
+                        >
+                          {generateDisclaimerSignedData().map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-bold">Not Signed:</span> {
-                        filteredData.filter(record => !record.Disclaimer_Signed).length
-                      }
-                    </p>
+                  
+                  {/* Disclaimer Signed Stats */}
+                  <div className="mt-4 grid grid-cols-1 gap-2">
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-700 text-sm">
+                        <span className="font-bold">Signed:</span> {
+                          filteredData.filter(record => record.Disclaimer_Signed).length
+                        }
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-700 text-sm">
+                        <span className="font-bold">Not Signed:</span> {
+                          filteredData.filter(record => !record.Disclaimer_Signed).length
+                        }
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Replacement Status Pie Chart */}
-              <div className="mb-8">
-                <h3 className="text-md font-semibold mb-4 text-center">Replacement Status</h3>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={generateReplacementData()}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={renderCustomizedLabel}
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {generateReplacementData().map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-4 max-w-md mx-auto">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-bold">Replaced:</span> {
-                        filteredData.filter(record => {
-                          // Check if record has Active_U_Pass_Card
-                          if (!record.Active_U_Pass_Card) return false;
-                          
-                          // Check if Replaced_U_Pass_Card exists and is not empty
-                          if (!record.Replaced_U_Pass_Card) return false;
-                          
-                          // If it's a string, check if it's not just whitespace
-                          if (typeof record.Replaced_U_Pass_Card === 'string') {
-                            return record.Replaced_U_Pass_Card.trim() !== '';
-                          }
-                          
-                          // If it's not a string but has some value, consider it valid
-                          return true;
-                        }).length
-                      }
-                    </p>
+                
+                {/* Replacement Status Section */}
+                <div className="bg-white border border-gray-300 rounded-lg p-4">
+                  <h4 className="font-bold text-center mb-4">Replacement Status</h4>
+                  <p className="text-sm text-gray-600 text-center mb-4">Shows the percentage of active U-Pass users who have replacements.</p>
+                  
+                  {/* Replacement Status Pie Chart */}
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          key={`replacement-status-${chartKey}`}
+                          data={generateReplacementData()}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={renderCustomizedLabel}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          animationBegin={0}
+                          animationDuration={1000}
+                        >
+                          {generateReplacementData().map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700">
-                      <span className="font-bold">Not Replaced:</span> {
-                        filteredData.filter(record => record.Active_U_Pass_Card).length - 
-                        filteredData.filter(record => {
-                          // Check if record has Active_U_Pass_Card
-                          if (!record.Active_U_Pass_Card) return false;
-                          
-                          // Check if Replaced_U_Pass_Card exists and is not empty
-                          if (!record.Replaced_U_Pass_Card) return false;
-                          
-                          // If it's a string, check if it's not just whitespace
-                          if (typeof record.Replaced_U_Pass_Card === 'string') {
-                            return record.Replaced_U_Pass_Card.trim() !== '';
-                          }
-                          
-                          // If it's not a string but has some value, consider it valid
-                          return true;
-                        }).length
-                      }
-                    </p>
+                  
+                  {/* Replacement Status Stats */}
+                  <div className="mt-4 grid grid-cols-1 gap-2">
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-700 text-sm">
+                        <span className="font-bold">Replaced:</span> {
+                          filteredData.filter(record => {
+                            // Check if record has Active_U_Pass_Card
+                            if (!record.Active_U_Pass_Card) return false;
+                            
+                            // Check if Replaced_U_Pass_Card exists and is not empty
+                            if (!record.Replaced_U_Pass_Card) return false;
+                            
+                            // If it's a string, check if it's not just whitespace
+                            if (typeof record.Replaced_U_Pass_Card === 'string') {
+                              return record.Replaced_U_Pass_Card.trim() !== '';
+                            }
+                            
+                            // If it's not a string but has some value, consider it valid
+                            return true;
+                          }).length
+                        }
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-700 text-sm">
+                        <span className="font-bold">Not Replaced:</span> {
+                          filteredData.filter(record => record.Active_U_Pass_Card).length - 
+                          filteredData.filter(record => {
+                            // Check if record has Active_U_Pass_Card
+                            if (!record.Active_U_Pass_Card) return false;
+                            
+                            // Check if Replaced_U_Pass_Card exists and is not empty
+                            if (!record.Replaced_U_Pass_Card) return false;
+                            
+                            // If it's a string, check if it's not just whitespace
+                            if (typeof record.Replaced_U_Pass_Card === 'string') {
+                              return record.Replaced_U_Pass_Card.trim() !== '';
+                            }
+                            
+                            // If it's not a string but has some value, consider it valid
+                            return true;
+                          }).length
+                        }
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
