@@ -6,6 +6,7 @@
 import AWS from 'aws-sdk';
 import XLSX from 'xlsx';
 import mysql from 'mysql2/promise';
+import path from 'path';
 
 // S3 is built-in in Lambda's runtime, so AWS SDK is available,
 // but xlsx and mysql2 will come from your Lambda Layer.
@@ -29,6 +30,23 @@ export const handler = async (event) => {
       return { statusCode: 200, body: 'Not processed.' };
     }
     
+    // Extract the filename from the key
+    const filename = path.basename(key);
+    console.log(`Processing file: ${filename}`);
+    
+    // Determine which table to update based on the filename
+    let tableName = 'u_pass_manager'; // Default table
+    
+    if (filename.includes('Mockup_Data_UPass_last')) {
+      tableName = 'u_pass_manager_last';
+    } else if (filename.includes('Mockup_Data_UPass_lastest')) {
+      tableName = 'u_pass_manager_lastest';
+    } else if (!filename.includes('Mockup_Data_UPass')) {
+      console.log(`Unrecognized file pattern: ${filename}, using default table.`);
+    }
+    
+    console.log(`Selected table: ${tableName}`);
+    
     // Retrieve the file from S3
     const fileData = await s3.getObject({ Bucket: bucket, Key: key }).promise();
     console.log('File retrieved from S3.');
@@ -49,9 +67,9 @@ export const handler = async (event) => {
     });
     console.log('Connected to RDS.');
     
-    // Define your SQL query (update the table name as needed)
+    // Define your SQL query with the dynamic table name
     const sql = `
-      INSERT INTO u_pass_manager (
+      INSERT INTO ${tableName} (
         U_Pass_ID,
         Active_U_Pass_Card,
         Replaced_U_Pass_Card,
@@ -139,13 +157,13 @@ export const handler = async (event) => {
         Notes
       ]);
       
-      console.log(`Upserted row for U_Pass_ID = ${U_Pass_ID}`);
+      console.log(`Upserted row for U_Pass_ID = ${U_Pass_ID} in table ${tableName}`);
     }
     
     await connection.end();
     console.log('Database connection closed.');
     
-    return { statusCode: 200, body: 'Database updated successfully' };
+    return { statusCode: 200, body: `Database table ${tableName} updated successfully` };
     
   } catch (error) {
     console.error('Error processing file:', error);
