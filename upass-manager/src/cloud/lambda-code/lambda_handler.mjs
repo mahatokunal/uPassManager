@@ -97,12 +97,39 @@ export const handler = async (event) => {
         Notes = null
       } = row;
       
+      // Format the date from MM-DD-YYYY to YYYY-MM-DD for MySQL
+      let formattedDate = null;
+      if (Distribution_Date) {
+        // Check if the date is already in YYYY-MM-DD format
+        const isYearFirst = /^\d{4}-\d{1,2}-\d{1,2}$/.test(Distribution_Date);
+        
+        if (isYearFirst) {
+          // Already in YYYY-MM-DD format
+          formattedDate = Distribution_Date;
+        } else {
+          // Try to parse as MM-DD-YYYY
+          const dateParts = Distribution_Date.split(/[-\/]/);
+          if (dateParts.length === 3) {
+            // Assuming MM-DD-YYYY format
+            const month = dateParts[0].padStart(2, '0');
+            const day = dateParts[1].padStart(2, '0');
+            const year = dateParts[2].length === 2 ? `20${dateParts[2]}` : dateParts[2];
+            formattedDate = `${year}-${month}-${day}`;
+          } else {
+            // If we can't parse it, use the original value
+            formattedDate = Distribution_Date;
+          }
+        }
+        
+        console.log(`Converted date from ${Distribution_Date} to ${formattedDate}`);
+      }
+      
       await connection.execute(sql, [
         U_Pass_ID,
         Active_U_Pass_Card,
         Replaced_U_Pass_Card,
         Metro_Acct,
-        Distribution_Date,
+        formattedDate, // Use the formatted date
         Picked_Up_By,
         Student_ID,
         First_Name,
