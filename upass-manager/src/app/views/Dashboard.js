@@ -56,8 +56,8 @@ const Dashboard = () => {
 
   const cardData = [
     {
-      title: "Add Distributor",
-      description: "The admin can add distributors who can give access to specific options.",
+      title: "Distributor",
+      description: "The admin can add/remove distributors who can give/revoke access of specific individuals.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ const Dashboard = () => {
     },
     {
       title: "Upload File",
-      description: "This option is only accessible to Distributors who can upload files.",
+      description: "This option is only accessible to Distributors who can upload files for processing.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +94,7 @@ const Dashboard = () => {
     },
     {
       title: "Send Notification",
-      description: "Send notifications to students about their U-Pass status.",
+      description: "Send notifications to students about their U-Pass status. This option has a view of students.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -478,8 +478,8 @@ const Dashboard = () => {
                 style={{ borderRadius: '50px' }}
                 onClick={() => {
                   if (index === 0) {
-                    // Open Add Distributor modal
-                    setIsAddDistributorModalOpen(true);
+                    // Navigate to the distributors page
+                    router.push('/distributors');
                   } else if (index === 1) {
                     setIsModalOpen(true);
                   } else if (index === 2) {

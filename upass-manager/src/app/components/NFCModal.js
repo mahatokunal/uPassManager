@@ -31,6 +31,12 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
       setError('Please enter a U-Pass number');
       return;
     }
+
+    // Check if the U-Pass number is numeric and exactly 20 digits
+    if (!/^\d{20}$/.test(upassId)) {
+      setError('Please enter a 20-digit U-Pass number');
+      return;
+    }
     
     // Convert to number and validate
     const numericUpassId = Number(upassId);
