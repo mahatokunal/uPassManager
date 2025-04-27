@@ -1,2 +1,3 @@
 /node_modules
 /upass-manager/backend-api/node_modules
+/upass-manager/src/cloud/lambda-code.zip
