@@ -418,7 +418,11 @@ const Dashboard = () => {
                   </div>
                   <div className="col-span-2 sm:col-span-1">
                     <p className="text-sm text-gray-500">Distribution Date</p>
-                    <p className="font-medium">{searchResult.Distribution_Date}</p>
+                    <p className="font-medium">
+                      {searchResult.Distribution_Date && searchResult.Distribution_Date.includes('T') 
+                        ? searchResult.Distribution_Date.split('T')[0] 
+                        : searchResult.Distribution_Date}
+                    </p>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
                     <p className="text-sm text-gray-500">Picked Up By</p>
