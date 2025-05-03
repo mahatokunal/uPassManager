@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     // Update with numeric 1 (boolean true) as specified by the database schema
     console.log('Updating Disclaimer_Signed to 1 (boolean true)');
     const [result] = await pool.query(
-      'UPDATE u_pass_manager SET Disclaimer_Signed = 1 WHERE Student_ID = ?',
+      'UPDATE u_pass_manager_current SET Disclaimer_Signed = 1 WHERE Student_ID = ?',
       [pid]
     );
     console.log('Update result:', result);
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       
       // Check if the record exists
       const [rows] = await pool.query(
-        'SELECT * FROM u_pass_manager WHERE Student_ID = ?',
+        'SELECT * FROM u_pass_manager_current WHERE Student_ID = ?',
         [pid]
       );
       
