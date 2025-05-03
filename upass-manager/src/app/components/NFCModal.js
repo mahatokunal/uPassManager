@@ -8,6 +8,9 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   const [error, setError] = useState(null);
   const inputRef = useRef(null);
   
+  // Determine if this is a replacement (student already has an active U-Pass)
+  const isReplacement = studentInfo && studentInfo.Active_U_Pass_Card;
+  
   // Focus the input field when the modal opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -38,15 +41,8 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
       return;
     }
     
-    // Convert to number and validate
-    const numericUpassId = Number(upassId);
-    if (isNaN(numericUpassId)) {
-      setError('U-Pass number must be numeric');
-      return;
-    }
-    
     // Call the confirm handler with the numeric U-Pass ID
-    onConfirm(numericUpassId);
+    onConfirm(upassId);
   };
   
   if (!isOpen) return null;
@@ -54,18 +50,32 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4 text-[#861F41]">Allocate U-Pass</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#861F41]">
+          {isReplacement ? 'Replace U-Pass' : 'Allocate U-Pass'}
+        </h2>
         
         {studentInfo && (
           <div className="mb-4">
             <p className="text-sm text-gray-700 mb-2">
-              Allocating U-Pass for:
+              {isReplacement ? 'Replacing U-Pass for:' : 'Allocating U-Pass for:'}
             </p>
             <div className="bg-gray-100 p-3 rounded">
               <p><span className="font-medium">Name:</span> {studentInfo.First_Name} {studentInfo.Last_Name}</p>
               <p><span className="font-medium">PID:</span> {maskPid(studentInfo.Student_ID)}</p>
               <p><span className="font-medium">Email:</span> {studentInfo.Email}</p>
+              
+              {/* Show current U-Pass number if this is a replacement */}
+              {isReplacement && (
+                <p><span className="font-medium">Current U-Pass:</span> {studentInfo.Active_U_Pass_Card}</p>
+              )}
             </div>
+            
+            {/* Add replacement note */}
+            {isReplacement && (
+              <div className="mt-3 text-sm bg-yellow-50 p-3 rounded border border-yellow-200 text-yellow-800">
+                Do you want to replace the existing card with the new one? The old card will be moved to the replaced cards list.
+              </div>
+            )}
           </div>
         )}
         
@@ -113,7 +123,7 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
             onClick={handleSubmit}
             className="px-4 py-2 bg-[#861F41] text-white rounded hover:bg-[#6e1935] transition"
           >
-            Allocate U-Pass
+            {isReplacement ? 'Replace U-Pass' : 'Allocate U-Pass'}
           </button>
         </div>
       </div>
