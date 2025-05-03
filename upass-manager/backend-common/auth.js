@@ -3,6 +3,56 @@ import pool from '../backend-api/db.js';  // Import your DB connection from back
 import jwt from 'jsonwebtoken';
 
 /**
+ * Verify a JWT token from a request.
+ * @param {Object} req - The request object.
+ * @returns {Promise<Object|null>} - The decoded user object or null if invalid.
+ */
+export async function verifyToken(req) {
+  try {
+    // For simplicity, we'll use the userRole from cookies or localStorage
+    // In a production app, you would verify a JWT token here
+    
+    // Check if we're in browser or server environment
+    const isServer = typeof window === 'undefined';
+    
+    if (isServer) {
+      // Server-side: try to get from cookies
+      const cookies = req.headers.cookie ? parseCookies(req.headers.cookie) : {};
+      const userRole = cookies.userRole;
+      if (userRole) {
+        return { role: userRole };
+      }
+    } else {
+      // Client-side: try to get from localStorage
+      const userRole = localStorage.getItem('userRole');
+      if (userRole) {
+        return { role: userRole };
+      }
+    }
+    
+    return null;
+  } catch (err) {
+    console.error('Token verification error:', err);
+    return null;
+  }
+}
+
+// Helper function to parse cookies
+function parseCookies(cookieString) {
+  const cookies = {};
+  if (!cookieString) return cookies;
+  
+  cookieString.split(';').forEach(cookie => {
+    const parts = cookie.split('=');
+    const name = parts[0].trim();
+    const value = parts[1] || '';
+    cookies[name] = decodeURIComponent(value.trim());
+  });
+  
+  return cookies;
+}
+
+/**
  * Authenticate a user with email and password.
  * @param {string} email - The user's email.
  * @param {string} password - The user's password.
