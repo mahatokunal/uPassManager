@@ -129,7 +129,7 @@ const Distributors = () => {
         ) : (
           <>
             <div className="w-full max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-center items-center mb-6">
                 <div></div>
                 <div className="flex space-x-4">
                 <button
