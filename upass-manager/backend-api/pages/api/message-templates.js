@@ -1,5 +1,5 @@
 // backend-api/pages/api/message-templates.js
-import pool from '../../db';
+import pool, { executeQuery } from '../../db';
 import { verifyToken } from '../../../backend-common/auth';
 
 export default async function handler(req, res) {
@@ -57,15 +57,10 @@ export default async function handler(req, res) {
 // Get all templates
 async function getTemplates(req, res) {
   try {
-    const conn = await pool.getConnection();
-    try {
-      const [rows] = await conn.query(
-        'SELECT * FROM message_templates ORDER BY created_at DESC'
-      );
-      return res.status(200).json({ templates: rows });
-    } finally {
-      conn.release();
-    }
+    const templates = await executeQuery(
+      'SELECT * FROM message_templates ORDER BY created_at DESC'
+    );
+    return res.status(200).json({ templates });
   } catch (error) {
     console.error('Error fetching templates:', error);
     return res.status(500).json({ message: 'Internal server error' });
@@ -81,25 +76,20 @@ async function createTemplate(req, res) {
   }
 
   try {
-    const conn = await pool.getConnection();
-    try {
-      const [result] = await conn.query(
-        'INSERT INTO message_templates (title, message, created_at, updated_at) VALUES (?, ?, NOW(), NOW())',
-        [title, message]
-      );
-      
-      const [newTemplate] = await conn.query(
-        'SELECT * FROM message_templates WHERE id = ?',
-        [result.insertId]
-      );
-      
-      return res.status(201).json({ 
-        message: 'Template created successfully', 
-        template: newTemplate[0] 
-      });
-    } finally {
-      conn.release();
-    }
+    const result = await executeQuery(
+      'INSERT INTO message_templates (title, message, created_at, updated_at) VALUES (?, ?, NOW(), NOW())',
+      [title, message]
+    );
+    
+    const newTemplate = await executeQuery(
+      'SELECT * FROM message_templates WHERE id = ?',
+      [result.insertId]
+    );
+    
+    return res.status(201).json({ 
+      message: 'Template created successfully', 
+      template: newTemplate[0] 
+    });
   } catch (error) {
     console.error('Error creating template:', error);
     return res.status(500).json({ message: 'Internal server error' });
@@ -115,29 +105,24 @@ async function updateTemplate(req, res) {
   }
 
   try {
-    const conn = await pool.getConnection();
-    try {
-      const [result] = await conn.query(
-        'UPDATE message_templates SET title = ?, message = ?, updated_at = NOW() WHERE id = ?',
-        [title, message, id]
-      );
-      
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'Template not found' });
-      }
-      
-      const [updatedTemplate] = await conn.query(
-        'SELECT * FROM message_templates WHERE id = ?',
-        [id]
-      );
-      
-      return res.status(200).json({ 
-        message: 'Template updated successfully', 
-        template: updatedTemplate[0] 
-      });
-    } finally {
-      conn.release();
+    const result = await executeQuery(
+      'UPDATE message_templates SET title = ?, message = ?, updated_at = NOW() WHERE id = ?',
+      [title, message, id]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Template not found' });
     }
+    
+    const updatedTemplate = await executeQuery(
+      'SELECT * FROM message_templates WHERE id = ?',
+      [id]
+    );
+    
+    return res.status(200).json({ 
+      message: 'Template updated successfully', 
+      template: updatedTemplate[0] 
+    });
   } catch (error) {
     console.error('Error updating template:', error);
     return res.status(500).json({ message: 'Internal server error' });
@@ -153,24 +138,19 @@ async function deleteTemplate(req, res) {
   }
 
   try {
-    const conn = await pool.getConnection();
-    try {
-      const [result] = await conn.query(
-        'DELETE FROM message_templates WHERE id = ?',
-        [id]
-      );
-      
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'Template not found' });
-      }
-      
-      return res.status(200).json({ 
-        message: 'Template deleted successfully',
-        id: id
-      });
-    } finally {
-      conn.release();
+    const result = await executeQuery(
+      'DELETE FROM message_templates WHERE id = ?',
+      [id]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Template not found' });
     }
+    
+    return res.status(200).json({ 
+      message: 'Template deleted successfully',
+      id: id
+    });
   } catch (error) {
     console.error('Error deleting template:', error);
     return res.status(500).json({ message: 'Internal server error' });

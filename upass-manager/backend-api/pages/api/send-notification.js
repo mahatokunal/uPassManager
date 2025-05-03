@@ -1,5 +1,5 @@
 // backend-api/pages/api/send-notification.js
-import pool from '../../db';
+import pool, { executeQuery } from '../../db';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from 'dotenv';
 
@@ -80,12 +80,16 @@ export default async function handler(req, res) {
     const result = responsePayload.body ? JSON.parse(responsePayload.body) : {};
     const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
     
+    // Pass detailed results back to frontend
     return res.status(200).json({
       message: 'Notifications sent successfully via Lambda',
       success: true,
-      sent: result.sent || 0,
-      total: result.total || 0,
-      errors: result.errors,
+      sent: result.results?.successful?.length || 0,
+      total: recipients.length,
+      results: result.results || {
+        successful: [],
+        failed: []
+      },
       timestamp
     });
   } catch (error) {

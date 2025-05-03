@@ -23,6 +23,9 @@ const Notifications = () => {
   const [showEditTemplateModal, setShowEditTemplateModal] = useState(false);
   const [selectedEditTemplate, setSelectedEditTemplate] = useState(null);
   
+  // Notification results state
+  const [notificationResults, setNotificationResults] = useState(null);
+  
   // Check if user is logged in
   useEffect(() => {
     const userRole = localStorage.getItem('userRole');
@@ -363,6 +366,7 @@ const Notifications = () => {
     
     setSendingNotification(true);
     setError(null);
+    setNotificationResults(null);
     
     try {
       const response = await fetch('/api/send-notification', {
@@ -383,15 +387,15 @@ const Notifications = () => {
         throw new Error(data.message || 'Failed to send notification');
       }
       
+      // Store the detailed results
+      setNotificationResults(data);
       setNotificationSuccess(true);
       setSubject('');
       setMessage('');
       setSelectedRecords([]);
       
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        setNotificationSuccess(false);
-      }, 3000);
+      // We'll no longer automatically hide the success message
+      // The user can close it manually or send another notification
     } catch (err) {
       console.error('Error sending notification:', err);
       setError(err.message || 'An error occurred while sending notification');
@@ -904,6 +908,48 @@ const Notifications = () => {
         {/* Message input and send button */}
         <div className="bg-white shadow-md rounded-lg p-6">
           <h2 className="text-lg font-bold mb-4 text-[#861F41]">Compose Notification</h2>
+          
+          {/* Notification results displayed right above the form */}
+          {notificationSuccess && notificationResults && (
+            <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md">
+              <div className="flex justify-between items-center">
+                <div className="font-semibold mb-2">Notification Results:</div>
+                <button 
+                  onClick={() => setNotificationSuccess(false)} 
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div>
+                <p className="mb-2">
+                  <span className="font-medium">Successfully sent to: </span> 
+                  {notificationResults.sent} recipient(s)
+                  {notificationResults.results?.successful?.length > 0 && (
+                    <span className="block mt-1 text-sm">
+                      {notificationResults.results.successful.join(', ')}
+                    </span>
+                  )}
+                </p>
+                
+                {notificationResults.results?.failed?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="font-medium">Failed to send to: {notificationResults.results.failed.length} recipient(s)</p>
+                    <ul className="list-disc pl-5 mt-1 text-sm">
+                      {notificationResults.results.failed.map((failure, index) => (
+                        <li key={index}>
+                          {failure.email}: {failure.reason}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
           <div className="mb-4">
             <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
               Subject
