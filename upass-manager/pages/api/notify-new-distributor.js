@@ -52,7 +52,8 @@ U-Pass Management
     const command = new InvokeCommand({
       FunctionName: "CS5934_G6_SES",
       InvocationType: "RequestResponse",
-      Payload: Buffer.from(JSON.stringify(payload)),});
+      Payload: Buffer.from(JSON.stringify(payload)),
+    });
 
     const response = await lambda.send(command);
 
