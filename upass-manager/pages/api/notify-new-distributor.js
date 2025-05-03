@@ -53,7 +53,7 @@ U-Pass Management
       FunctionName: "CS5934_G6_SES",
       InvocationType: "RequestResponse",
       Payload: Buffer.from(JSON.stringify(payload)),
-wwwwww    });
+    });
 
     const response = await lambda.send(command);
 
