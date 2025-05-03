@@ -2,31 +2,142 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { maskPid } from '../utils/maskPid';
+import { io } from 'socket.io-client';
 
 const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   const [upassId, setUpassId] = useState('');
   const [error, setError] = useState(null);
+  const [nfcStatus, setNfcStatus] = useState('disconnected'); // 'disconnected', 'connecting', 'connected', 'error'
+  const [readers, setReaders] = useState([]);
+  const [statusMessage, setStatusMessage] = useState('');
   const inputRef = useRef(null);
+  const socketRef = useRef(null);
   
   // Determine if this is a replacement (student already has an active U-Pass)
   const isReplacement = studentInfo && studentInfo.Active_U_Pass_Card;
   
-  // Focus the input field when the modal opens
+  // Connect to NFC bridge server when modal opens
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current.focus();
-      }, 100);
+    if (isOpen) {
+      // Focus the input field
+      if (inputRef.current) {
+        setTimeout(() => {
+          inputRef.current.focus();
+        }, 100);
+      }
+      
+      // Connect to NFC bridge server
+      connectToNfcServer();
+    } else {
+      // Disconnect from NFC bridge server when modal closes
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      
+      // Reset state
+      setUpassId('');
+      setError(null);
+      setNfcStatus('disconnected');
+      setReaders([]);
+      setStatusMessage('');
     }
   }, [isOpen]);
   
-  // Reset state when modal is closed
-  useEffect(() => {
-    if (!isOpen) {
-      setUpassId('');
-      setError(null);
+  // Function to connect to NFC bridge server
+  const connectToNfcServer = () => {
+    try {
+      setNfcStatus('connecting');
+      setStatusMessage('Connecting to NFC server...');
+      
+      // Connect to NFC bridge server
+      const socket = io('http://localhost:3001');
+      socketRef.current = socket;
+      
+      // Connection established
+      socket.on('connect', () => {
+        console.log('Connected to NFC bridge server');
+        setNfcStatus('connected');
+        setStatusMessage('Connected to NFC server. Waiting for card...');
+      });
+      
+      // Connection error
+      socket.on('connect_error', (err) => {
+        console.error('Connection error:', err);
+        setNfcStatus('error');
+        setStatusMessage('Failed to connect to NFC server. Please make sure the NFC bridge server is running.');
+      });
+      
+      // Readers available
+      socket.on('readers', (readerList) => {
+        console.log('Available readers:', readerList);
+        setReaders(readerList);
+        
+        if (readerList.length === 0) {
+          setStatusMessage('No NFC readers detected. Please connect an NFC reader.');
+        } else {
+          setStatusMessage(`NFC reader detected: ${readerList.join(', ')}. Waiting for card...`);
+        }
+      });
+      
+      // Reader connected
+      socket.on('readerConnected', (data) => {
+        console.log('Reader connected:', data.name);
+        setReaders(prev => [...prev, data.name]);
+        setStatusMessage(`NFC reader connected: ${data.name}. Waiting for card...`);
+      });
+      
+      // Reader disconnected
+      socket.on('readerDisconnected', (data) => {
+        console.log('Reader disconnected:', data.name);
+        setReaders(prev => prev.filter(reader => reader !== data.name));
+        
+        if (readers.length === 0) {
+          setStatusMessage('No NFC readers detected. Please connect an NFC reader.');
+        } else {
+          setStatusMessage(`NFC reader disconnected: ${data.name}`);
+        }
+      });
+      
+      // Card detected
+      socket.on('cardDetected', (data) => {
+        console.log('Card detected:', data);
+        
+        // Set the U-Pass ID
+        setUpassId(data.cardNumber);
+        setStatusMessage(`Card detected: ${data.cardNumber}`);
+        
+        // Automatically submit after a short delay
+        // setTimeout(() => {
+        //   handleSubmit();
+        // }, 500);
+      });
+      
+      // Card removed
+      socket.on('cardRemoved', (data) => {
+        console.log('Card removed from reader:', data.reader);
+        setStatusMessage('Card removed. Please scan again or enter U-Pass number manually.');
+      });
+      
+      // Error
+      socket.on('error', (data) => {
+        console.error('NFC error:', data);
+        setError(data.message);
+        setStatusMessage(`Error: ${data.message}`);
+      });
+      
+      // Disconnected
+      socket.on('disconnect', () => {
+        console.log('Disconnected from NFC bridge server');
+        setNfcStatus('disconnected');
+        setStatusMessage('Disconnected from NFC server.');
+      });
+    } catch (err) {
+      console.error('Error connecting to NFC bridge server:', err);
+      setNfcStatus('error');
+      setStatusMessage('Failed to connect to NFC server. Please make sure the NFC bridge server is running.');
     }
-  }, [isOpen]);
+  };
   
   const handleSubmit = () => {
     // Validate the input
@@ -101,9 +212,15 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
               </svg>
             </div>
           </div>
-          <p className="mt-2 text-sm text-gray-500">
-            Place the U-Pass card near the NFC reader or manually enter the U-Pass number
-          </p>
+          
+          {/* NFC Status */}
+          <div className={`mt-2 text-sm ${
+            nfcStatus === 'connected' ? 'text-green-600' : 
+            nfcStatus === 'connecting' ? 'text-yellow-600' : 
+            nfcStatus === 'error' ? 'text-red-600' : 'text-gray-500'
+          }`}>
+            {statusMessage || 'Place the U-Pass card near the NFC reader or manually enter the U-Pass number'}
+          </div>
         </div>
         
         {error && (
