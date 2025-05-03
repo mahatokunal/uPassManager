@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -88,7 +87,7 @@ const Login = () => {
   // If still checking session, show loading spinner
   if (checkingSession) {
     return (
-      <div className="flex flex-col h-full items-center justify-center bg-gradient-to-b from-white to-gray-100 overflow-hidden">
+      <div className="flex flex-col h-full items-center justify-center bg-white">
         <div className="flex flex-col items-center justify-center">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#861F41] mb-4"></div>
           <p className="text-gray-600">Checking session...</p>
