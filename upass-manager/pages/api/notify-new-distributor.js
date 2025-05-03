@@ -1,4 +1,5 @@
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import pool from '../../backend-api/db.js';
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -61,6 +62,27 @@ U-Pass Management
 
     if (responsePayload.statusCode !== 200) {
       throw new Error(responsePayload.body ? JSON.parse(responsePayload.body).error : 'Lambda function failed');
+    }
+
+    // Add a temporary entry in the database with a placeholder password
+    // This will be updated when the user sets their password
+    try {
+      // Check if the user already exists
+      const [existingUsers] = await pool.query(
+        'SELECT * FROM users WHERE email = ?',
+        [email]
+      );
+
+      if (existingUsers.length === 0) {
+        // Insert a new user with role 'distributor' and a temporary password
+        await pool.query(
+          'INSERT INTO users (email, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?)',
+          [email, distributorName, '', 'TEMPORARY_PASSWORD_CHANGE_REQUIRED', 'distributor']
+        );
+      }
+    } catch (dbErr) {
+      console.error('Error adding temporary distributor to database:', dbErr);
+      // Continue even if database operation fails, as the email was sent successfully
     }
 
     res.status(200).json({ success: true, message: "Distributor notified successfully." });

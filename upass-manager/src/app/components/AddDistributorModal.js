@@ -22,7 +22,9 @@ const AddDistributorModal = ({ isOpen, onClose, onConfirm }) => {
     try {
       // Create the payload
       const distributorName = email.split('@')[0]; 
-      const setPasswordLink = `https://yourdomain.com/set-password?email=${encodeURIComponent(email)}`;
+      // Use the actual application URL for the set-password link
+      const baseUrl = window.location.origin;
+      const setPasswordLink = `${baseUrl}/set-password?email=${encodeURIComponent(email)}`;
   
 
       const response = await fetch('/api/notify-new-distributor', {
