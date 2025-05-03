@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MessageTemplateModal from '../components/MessageTemplateModal';
+import EditStudentModal from '../components/EditStudentModal';
+import ViewStudentModal from '../components/ViewStudentModal';
 import { maskPid } from '../utils/maskPid';
 
 const Notifications = () => {
@@ -23,7 +25,6 @@ const Notifications = () => {
   
   // Notification results state
   const [notificationResults, setNotificationResults] = useState(null);
-  const [notificationSuccess, setNotificationSuccess] = useState(false);
   
   // Check if user is logged in
   useEffect(() => {
@@ -47,6 +48,11 @@ const Notifications = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [sendingNotification, setSendingNotification] = useState(false);
+  const [notificationSuccess, setNotificationSuccess] = useState(false);
+  const [recordUpdateSuccess, setRecordUpdateSuccess] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
   const [filters, setFilters] = useState({
     First_Name: '',
     Last_Name: '',
@@ -293,7 +299,55 @@ const Notifications = () => {
     setSelectedEditTemplate(template);
     setShowEditTemplateModal(true);
   };
-  
+
+  const handleViewStudent = (student) => {
+    setSelectedStudent(student);
+    setViewModalOpen(true);
+  };
+
+  const handleEditStudent = (student) => {
+    setSelectedStudent(student);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveStudent = async (updatedStudent) => {
+    try {
+      const response = await fetch('/api/update-student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedStudent),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update student record');
+      }
+      
+      // Update the records state with the updated student
+      setRecords(prevRecords => 
+        prevRecords.map(record => 
+          record.Student_ID === updatedStudent.Student_ID ? updatedStudent : record
+        )
+      );
+      
+      // Close the modal
+      setEditModalOpen(false);
+      setSelectedStudent(null);
+      
+      // Show success message for record update
+      setRecordUpdateSuccess(true);
+      setTimeout(() => {
+        setRecordUpdateSuccess(false);
+      }, 3000);
+    } catch (err) {
+      console.error('Error updating student record:', err);
+      setError(err.message || 'An error occurred while updating student record');
+    }
+  };
+
   const handleSendNotification = async () => {
     if (selectedRecords.length === 0) {
       setError('Please select at least one recipient');
@@ -417,6 +471,18 @@ const Notifications = () => {
         {error && (
           <div className="mb-6 p-3 bg-red-100 text-red-700 rounded-md">
             {error}
+          </div>
+        )}
+        
+        {notificationSuccess && (
+          <div className="mb-6 p-3 bg-green-100 text-green-700 rounded-md">
+            Notification sent successfully!
+          </div>
+        )}
+        
+        {recordUpdateSuccess && (
+          <div className="mb-6 p-3 bg-green-100 text-green-700 rounded-md">
+            Record updated successfully!
           </div>
         )}
         
@@ -572,6 +638,9 @@ const Notifications = () => {
                       </th>
                     )
                   ))}
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -649,7 +718,11 @@ const Notifications = () => {
                       )}
                       {visibleColumns.Distribution_Date && (
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {record.Distribution_Date || 'Not Distributed'}
+                          {record.Distribution_Date 
+                            ? (record.Distribution_Date.includes('T') 
+                                ? record.Distribution_Date.split('T')[0] 
+                                : record.Distribution_Date)
+                            : 'Not Distributed'}
                         </td>
                       )}
                       {visibleColumns.Picked_Up_By && (
@@ -658,15 +731,58 @@ const Notifications = () => {
                         </td>
                       )}
                       {visibleColumns.Notes && (
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {record.Notes || 'No Notes'}
-                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 relative group">
+                        <div className="relative">
+                          {record.Notes ? (
+                            <>
+                              <span>{record.Notes.length > 10 ? record.Notes.substring(0, 10) + '..' : record.Notes}</span>
+                              {record.Notes.length > 10 && (
+                                <div
+                                  className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 max-w-xs z-10 tooltip"
+                                  style={{ whiteSpace: 'normal' }} // Allow wrapping of long text
+                                >
+                                  {record.Notes}
+                                  <div className="absolute top-full left-4 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            'No Notes'
+                          )}
+                        </div>
+                      </td>
                       )}
                       {visibleColumns.U_Pass_ID && (
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {record.U_Pass_ID || 'None'}
                         </td>
                       )}
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end space-x-2">
+                          {/* View button */}
+                          <button
+                            onClick={() => handleViewStudent(record)}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="View Student Record"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </button>
+                          
+                          {/* Edit button */}
+                          <button
+                            onClick={() => handleEditStudent(record)}
+                            className="text-[#861F41] hover:text-[#6e1935] transition"
+                            title="Edit Student Record"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -881,6 +997,27 @@ const Notifications = () => {
         </div>
       </main>
       <Footer />
+      
+      {/* Edit Student Modal */}
+      <EditStudentModal
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setSelectedStudent(null);
+        }}
+        onSave={handleSaveStudent}
+        studentInfo={selectedStudent}
+      />
+      
+      {/* View Student Modal */}
+      <ViewStudentModal
+        isOpen={viewModalOpen}
+        onClose={() => {
+          setViewModalOpen(false);
+          setSelectedStudent(null);
+        }}
+        studentInfo={selectedStudent}
+      />
       
       {/* Template Modals */}
       <MessageTemplateModal

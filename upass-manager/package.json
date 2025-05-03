@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup-nfc": "node setup-nfc.js",
+    "update-nfc": "node update-nfc.js",
+    "uninstall-nfc": "node uninstall-nfc.js"
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.540.0",
@@ -17,7 +20,9 @@
     "next": "15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket.io-client": "^4.7.2",
     "upass-manager": "file:",
+    "uuid": "^11.1.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

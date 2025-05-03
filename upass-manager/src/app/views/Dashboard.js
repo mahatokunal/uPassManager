@@ -8,6 +8,7 @@ import UploadModal from '../components/UploadModal';
 import DisclaimerModal from '../components/DisclaimerModal';
 import NFCModal from '../components/NFCModal';
 import AddDistributorModal from '../components/AddDistributorModal';
+import VisualizationOptionsModal from '../components/VisualizationOptionsModal';
 import { maskPid } from '../utils/maskPid';
 import AWS from 'aws-sdk';
 const accessKeyId = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID;
@@ -33,6 +34,7 @@ const Dashboard = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAddDistributorModalOpen, setIsAddDistributorModalOpen] = useState(false);
   const [addDistributorSuccess, setAddDistributorSuccess] = useState(false);
+  const [isVisualizationOptionsModalOpen, setIsVisualizationOptionsModalOpen] = useState(false);
   
   // Get user role from localStorage on component mount and check if user is logged in
   useEffect(() => {
@@ -418,7 +420,11 @@ const Dashboard = () => {
                   </div>
                   <div className="col-span-2 sm:col-span-1">
                     <p className="text-sm text-gray-500">Distribution Date</p>
-                    <p className="font-medium">{searchResult.Distribution_Date}</p>
+                    <p className="font-medium">
+                      {searchResult.Distribution_Date && searchResult.Distribution_Date.includes('T') 
+                        ? searchResult.Distribution_Date.split('T')[0] 
+                        : searchResult.Distribution_Date}
+                    </p>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
                     <p className="text-sm text-gray-500">Picked Up By</p>
@@ -489,8 +495,8 @@ const Dashboard = () => {
                     // Navigate to the export page
                     router.push('/export');
                   } else if (index === 4) {
-                    // Navigate to the visualization page
-                    router.push('/visualization');
+                    // Open visualization options modal
+                    setIsVisualizationOptionsModalOpen(true);
                   }
                 }}
               >
@@ -557,6 +563,11 @@ const Dashboard = () => {
         isOpen={isAddDistributorModalOpen}
         onClose={() => setIsAddDistributorModalOpen(false)}
         onConfirm={handleAddDistributor}
+      />
+      
+      <VisualizationOptionsModal
+        isOpen={isVisualizationOptionsModalOpen}
+        onClose={() => setIsVisualizationOptionsModalOpen(false)}
       />
     </div>
   );

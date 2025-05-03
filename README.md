@@ -26,8 +26,6 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
 - **Testing and Maintenance**  
   Integrate comprehensive end-to-end and regression testing, along with continuous monitoring and maintenance practices, to ensure system stability and prompt issue resolution.
 
-
-
 ## User Roles
 
 - **Student (Sam)**  
@@ -45,6 +43,114 @@ The U-Pass Manager project is a comprehensive, cloud-based solution designed to 
    ```bash
    git clone https://github.com/your-repo/upass-manager.git
    cd upass-manager
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set Up Environment Variables**
+   Create a `.env` file in the root directory with the following variables:
+   ```
+   DB_HOST=your_database_host
+   DB_USER=your_database_user
+   DB_PASSWORD=your_database_password
+   DB_DATABASE=your_database_name
+   DB_PORT=your_database_port
+   ```
+
+4. **Start the Development Server**
+   ```bash
+   npm run dev
+   ```
+
+## NFC Integration
+
+The U-Pass Manager includes integration with NFC card readers to streamline the U-Pass allocation process. This feature allows distributors to quickly scan U-Pass cards and automatically fill in the card number.
+
+For a detailed explanation of the NFC integration architecture and data flow, see [ARCHITECTURE.md](src/nfc-bridge/ARCHITECTURE.md).
+
+### Setting Up NFC Support
+
+1. **Run the NFC Setup Script**
+   ```bash
+   npm run setup-nfc
+   ```
+   or
+   ```bash
+   node setup-nfc.js
+   ```
+   This script will install all necessary dependencies for both the main application and the NFC bridge server.
+
+2. **Start the NFC Bridge Server**
+   ```bash
+   cd src/nfc-bridge
+   npm start
+   ```
+
+3. **Start the Main Application (in a separate terminal)**
+   ```bash
+   npm run dev
+   ```
+
+4. **Connect an NFC Card Reader**
+   Connect your NFC card reader to your computer. The NFC bridge server will automatically detect it.
+
+5. **Using NFC in the Application**
+   - Log in as a distributor
+   - Search for a student by PID
+   - Click "Allocate U-Pass"
+   - Place the U-Pass card near the NFC reader
+   - The card number will be automatically filled in
+   - Click "Allocate U-Pass" to complete the process
+
+### Supported NFC Readers
+
+The NFC integration is designed to work with ACS (Advanced Card Systems) NFC readers, but may work with other PC/SC compatible readers as well.
+
+### Updating NFC Support
+
+To update the NFC integration to the latest version:
+
+```bash
+npm run update-nfc
+```
+or
+```bash
+node update-nfc.js
+```
+
+This script will:
+1. Pull the latest changes from the repository (if it's a git repository)
+2. Update dependencies for both the main application and the NFC bridge server
+3. Optionally check if your NFC reader is properly recognized
+4. Optionally start both servers
+
+### Uninstalling NFC Support
+
+If you no longer need the NFC integration, you can uninstall it:
+
+```bash
+npm run uninstall-nfc
+```
+or
+```bash
+node uninstall-nfc.js
+```
+
+This script will:
+1. Remove the NFC bridge directory
+2. Remove NFC-related dependencies from package.json
+3. Remove NFC-related scripts from package.json
+4. Update the NFCModal component to remove NFC integration
+5. Run npm install to update dependencies
+
+### Troubleshooting
+
+If you encounter issues with the NFC integration, see the [Troubleshooting Guide](src/nfc-bridge/TROUBLESHOOTING.md) for solutions to common problems.
+
+For more information about the NFC integration, see the [NFC Bridge README](src/nfc-bridge/README.md) and [Architecture Documentation](src/nfc-bridge/ARCHITECTURE.md).
 
 ## Contributors
 

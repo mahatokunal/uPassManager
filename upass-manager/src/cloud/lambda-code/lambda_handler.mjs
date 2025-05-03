@@ -115,6 +115,22 @@ export const handler = async (event) => {
         Notes = null
       } = row;
       
+      // Convert Disclaimer_Signed from "Yes"/"No" to boolean (1/0)
+      let disclaimerSignedBoolean = null;
+      if (Disclaimer_Signed !== null && Disclaimer_Signed !== undefined) {
+        // If it's already a boolean or number, use it as is
+        if (typeof Disclaimer_Signed === 'boolean') {
+          disclaimerSignedBoolean = Disclaimer_Signed ? 1 : 0;
+        } else if (typeof Disclaimer_Signed === 'number') {
+          disclaimerSignedBoolean = Disclaimer_Signed === 1 ? 1 : 0;
+        } else if (typeof Disclaimer_Signed === 'string') {
+          // Convert string "Yes"/"No" to boolean 1/0
+          disclaimerSignedBoolean = Disclaimer_Signed.toLowerCase() === 'yes' ? 1 : 0;
+        }
+      }
+      
+      console.log(`Converting Disclaimer_Signed from "${Disclaimer_Signed}" to ${disclaimerSignedBoolean}`);
+      
       // Format the date from MM-DD-YYYY to YYYY-MM-DD for MySQL
       let formattedDate = null;
       if (Distribution_Date) {
@@ -153,7 +169,7 @@ export const handler = async (event) => {
         First_Name,
         Last_Name,
         Email,
-        Disclaimer_Signed,
+        disclaimerSignedBoolean, // Use the converted boolean value
         Notes
       ]);
       

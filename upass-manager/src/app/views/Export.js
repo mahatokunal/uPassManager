@@ -15,6 +15,8 @@ const Export = () => {
   const [checkingSession, setCheckingSession] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
+  const [sendingToWMATA, setSendingToWMATA] = useState(false);
+  const [sendToWMATASuccess, setSendToWMATASuccess] = useState(false);
   
   // Check if user is logged in
   useEffect(() => {
@@ -197,9 +199,8 @@ const Export = () => {
     }
   };
 
-  // Function to export data to Excel
-  const exportToExcel = async () => {
-    setExporting(true);
+  // Function to prepare data for export
+  const prepareDataForExport = async () => {
     setError(null);
     
     try {
@@ -260,6 +261,21 @@ const Export = () => {
         headers[key] = column ? column.label : key;
       });
       
+      return { headers, worksheetData };
+    } catch (err) {
+      console.error('Error preparing data for export:', err);
+      setError(err.message || 'An error occurred while preparing data for export');
+      throw err;
+    }
+  };
+
+  // Function to export data to Excel
+  const exportToExcel = async () => {
+    setExporting(true);
+    
+    try {
+      const { headers, worksheetData } = await prepareDataForExport();
+      
       // Create worksheet with headers
       const worksheet = XLSX.utils.json_to_sheet([headers, ...worksheetData], {
         skipHeader: true // Skip default headers since we're providing custom ones
@@ -279,6 +295,33 @@ const Export = () => {
       setError(err.message || 'An error occurred while exporting to Excel');
     } finally {
       setExporting(false);
+    }
+  };
+
+  // Function to send data to WMATA
+  const sendToWMATA = async () => {
+    setSendingToWMATA(true);
+    
+    try {
+      const { headers, worksheetData } = await prepareDataForExport();
+      
+      // This is a placeholder for the actual API call
+      // In a real implementation, you would send the data to the WMATA API
+      console.log('Sending data to WMATA API:', { headers, worksheetData });
+      
+      // Simulate API call with a timeout
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // For now, just log success
+      console.log('Successfully sent data to WMATA');
+      
+      setSendToWMATASuccess(true);
+      setTimeout(() => setSendToWMATASuccess(false), 3000);
+    } catch (err) {
+      console.error('Error sending data to WMATA:', err);
+      setError(err.message || 'An error occurred while sending data to WMATA');
+    } finally {
+      setSendingToWMATA(false);
     }
   };
 
@@ -321,6 +364,12 @@ const Export = () => {
         {exportSuccess && (
           <div className="mb-6 p-3 bg-green-100 text-green-700 rounded-md">
             Data exported successfully!
+          </div>
+        )}
+        
+        {sendToWMATASuccess && (
+          <div className="mb-6 p-3 bg-green-100 text-green-700 rounded-md">
+            Data sent to WMATA successfully!
           </div>
         )}
         
@@ -618,7 +667,7 @@ const Export = () => {
           </div>
         </div>
         
-        {/* Export button */}
+        {/* Export buttons */}
         <div className="bg-white shadow-md rounded-lg p-6">
           <h2 className="text-lg font-bold mb-4 text-[#861F41]">Export Data</h2>
           <div className="flex items-center justify-between">
@@ -627,30 +676,53 @@ const Export = () => {
                 ? `${selectedRecords.length} record${selectedRecords.length !== 1 ? 's' : ''} selected for export` 
                 : 'All records will be exported'}
             </div>
-            <button
-              onClick={exportToExcel}
-              disabled={exporting || records.length === 0}
-              className={`px-4 py-2 rounded flex items-center ${
-                exporting || records.length === 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#861F41] text-white hover:bg-[#6e1935]'
-              } transition`}
-            >
-              <svg 
-                className="h-5 w-5 mr-2" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
+            <div className="flex space-x-3">
+              <button
+                onClick={exportToExcel}
+                disabled={exporting || sendingToWMATA || records.length === 0}
+                className={`px-4 py-2 rounded flex items-center ${
+                  exporting || sendingToWMATA || records.length === 0
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#861F41] text-white hover:bg-[#6e1935]'
+                } transition`}
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                />
-              </svg>
-              {exporting ? 'Exporting...' : 'Download Excel'}
-            </button>
+                <svg 
+                  className="h-5 w-5 mr-2" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                  />
+                </svg>
+                {exporting ? 'Exporting...' : 'Download Excel'}
+              </button>
+              
+              <button
+                onClick={sendToWMATA}
+                disabled={true} // Greyed out as requested
+                className="px-4 py-2 rounded flex items-center bg-gray-300 text-gray-500 cursor-not-allowed transition"
+              >
+                <svg 
+                  className="h-5 w-5 mr-2" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" 
+                  />
+                </svg>
+                {sendingToWMATA ? 'Sending...' : 'Send to WMATA'}
+              </button>
+            </div>
           </div>
         </div>
       </main>
