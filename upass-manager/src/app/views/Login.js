@@ -97,7 +97,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex flex-col h-full items-center justify-center bg-gradient-to-b from-white to-gray-100 overflow-hidden">
+    <div className="flex flex-col h-full items-center justify-center  overflow-hidden">
       <h1 
         className="text-3xl md:text-4xl font-bold mb-4 text-center text-[#861F41]" 
         style={{ 
