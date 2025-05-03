@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MessageTemplateModal from '../components/MessageTemplateModal';
 import { maskPid } from '../utils/maskPid';
 
 const Notifications = () => {
@@ -12,6 +13,13 @@ const Notifications = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [checkingSession, setCheckingSession] = useState(true);
+  
+  // Template state
+  const [templates, setTemplates] = useState([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [showAddTemplateModal, setShowAddTemplateModal] = useState(false);
+  const [showEditTemplateModal, setShowEditTemplateModal] = useState(false);
+  const [selectedEditTemplate, setSelectedEditTemplate] = useState(null);
   
   // Check if user is logged in
   useEffect(() => {
@@ -32,6 +40,7 @@ const Notifications = () => {
     totalRecords: 0
   });
   const [selectedRecords, setSelectedRecords] = useState([]);
+  const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [sendingNotification, setSendingNotification] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
@@ -81,6 +90,7 @@ const Notifications = () => {
   // Fetch records on component mount and when pagination or filters change
   useEffect(() => {
     fetchRecords();
+    fetchTemplates();
   }, [pagination.page, pagination.limit, filters]);
 
   const fetchRecords = async () => {
@@ -127,12 +137,12 @@ const Notifications = () => {
     }
   };
 
-  const handleSelectRecord = (id) => {
+  const handleSelectRecord = (email) => {
     setSelectedRecords(prev => {
-      if (prev.includes(id)) {
-        return prev.filter(recordId => recordId !== id);
+      if (prev.includes(email)) {
+        return prev.filter(recordEmail => recordEmail !== email);
       } else {
-        return [...prev, id];
+        return [...prev, email];
       }
     });
   };
@@ -141,13 +151,154 @@ const Notifications = () => {
     if (selectedRecords.length === records.length) {
       setSelectedRecords([]);
     } else {
-      setSelectedRecords(records.map(record => record.Student_ID));
+      setSelectedRecords(records.map(record => record.Email));
     }
   };
 
+  // Fetch message templates
+  const fetchTemplates = async () => {
+    setLoadingTemplates(true);
+    
+    try {
+      // Get userRole for authentication
+      const userRole = localStorage.getItem('userRole');
+      
+      const response = await fetch('/api/message-templates', {
+        headers: {
+          'Authorization': userRole || '',
+        },
+      });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch templates');
+      }
+      
+      setTemplates(data.templates || []);
+    } catch (err) {
+      console.error('Error fetching templates:', err);
+      // Silently fail for templates - not critical
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+  
+  // Add a new template
+  const handleAddTemplate = async (templateData) => {
+    try {
+      // Get userRole for authentication
+      const userRole = localStorage.getItem('userRole');
+      
+      const response = await fetch('/api/message-templates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': userRole || '',
+        },
+        body: JSON.stringify(templateData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create template');
+      }
+      
+      // Add the new template to the state
+      setTemplates(prev => [data.template, ...prev]);
+      setShowAddTemplateModal(false);
+    } catch (err) {
+      console.error('Error creating template:', err);
+      setError(err.message || 'An error occurred while creating the template');
+    }
+  };
+  
+  // Update an existing template
+  const handleUpdateTemplate = async (templateData) => {
+    try {
+      // Get userRole for authentication
+      const userRole = localStorage.getItem('userRole');
+      
+      const response = await fetch('/api/message-templates', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': userRole || '',
+        },
+        body: JSON.stringify(templateData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update template');
+      }
+      
+      // Update the template in the state
+      setTemplates(prev => 
+        prev.map(template => 
+          template.id === templateData.id ? data.template : template
+        )
+      );
+      setShowEditTemplateModal(false);
+      setSelectedEditTemplate(null);
+    } catch (err) {
+      console.error('Error updating template:', err);
+      setError(err.message || 'An error occurred while updating the template');
+    }
+  };
+  
+  // Delete a template
+  const handleDeleteTemplate = async (id) => {
+    if (!confirm('Are you sure you want to delete this template?')) {
+      return;
+    }
+    
+    try {
+      // Get userRole for authentication
+      const userRole = localStorage.getItem('userRole');
+      
+      const response = await fetch(`/api/message-templates?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': userRole || '',
+        },
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to delete template');
+      }
+      
+      // Remove the template from the state
+      setTemplates(prev => prev.filter(template => template.id !== id));
+    } catch (err) {
+      console.error('Error deleting template:', err);
+      setError(err.message || 'An error occurred while deleting the template');
+    }
+  };
+  
+  // Use a template by setting the subject and message fields
+  const handleUseTemplate = (template) => {
+    setSubject(template.title);
+    setMessage(template.message);
+  };
+  
+  // Edit a template
+  const handleEditTemplate = (template) => {
+    setSelectedEditTemplate(template);
+    setShowEditTemplateModal(true);
+  };
+  
   const handleSendNotification = async () => {
     if (selectedRecords.length === 0) {
       setError('Please select at least one recipient');
+      return;
+    }
+    
+    if (!subject.trim()) {
+      setError('Please enter a subject');
       return;
     }
     
@@ -167,6 +318,7 @@ const Notifications = () => {
         },
         body: JSON.stringify({
           recipients: selectedRecords,
+          subject: subject,
           message: message
         }),
       });
@@ -178,6 +330,7 @@ const Notifications = () => {
       }
       
       setNotificationSuccess(true);
+      setSubject('');
       setMessage('');
       setSelectedRecords([]);
       
@@ -446,8 +599,8 @@ const Notifications = () => {
                         <input
                           type="checkbox"
                           className="h-4 w-4 text-[#861F41] focus:ring-[#861F41] border-gray-300 rounded"
-                          checked={selectedRecords.includes(record.Student_ID)}
-                          onChange={() => handleSelectRecord(record.Student_ID)}
+                          checked={selectedRecords.includes(record.Email)}
+                          onChange={() => handleSelectRecord(record.Email)}
                         />
                       </td>
                       {visibleColumns.Student_ID && (
@@ -563,9 +716,98 @@ const Notifications = () => {
           </div>
         </div>
         
+        {/* Message Templates */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold text-[#861F41]">Message Templates</h2>
+            <button
+              onClick={() => setShowAddTemplateModal(true)}
+              disabled={templates.length >= 6}
+              className={`px-3 py-1 ${
+                templates.length >= 6 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-[#861F41] hover:bg-[#6e1935]'
+              } text-white rounded transition flex items-center`}
+            >
+              <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add Template
+              {templates.length >= 6 && (
+                <span className="ml-1 text-xs">(Limit reached)</span>
+              )}
+            </button>
+          </div>
+          
+          {loadingTemplates ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#861F41]"></div>
+            </div>
+          ) : templates.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">
+              No templates found. Create a template to get started.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {templates.map(template => (
+                <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-medium text-[#861F41] mb-2 flex-grow">{template.title}</h3>
+                    <div className="flex space-x-1">
+                      <button
+                        onClick={() => handleEditTemplate(template)}
+                        className="text-gray-500 hover:text-[#861F41] p-1"
+                        title="Edit Template"
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTemplate(template.id)}
+                        className="text-gray-500 hover:text-red-600 p-1"
+                        title="Delete Template"
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                    {template.message.length > 150 
+                      ? template.message.substring(0, 150) + '...' 
+                      : template.message}
+                  </p>
+                  <button
+                    onClick={() => handleUseTemplate(template)}
+                    className="text-sm text-[#861F41] hover:text-[#6e1935] transition"
+                  >
+                    Use Template
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
         {/* Message input and send button */}
         <div className="bg-white shadow-md rounded-lg p-6">
           <h2 className="text-lg font-bold mb-4 text-[#861F41]">Compose Notification</h2>
+          <div className="mb-4">
+            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+              Subject
+            </label>
+            <input
+              type="text"
+              id="subject"
+              name="subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Enter notification subject..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#861F41] focus:border-transparent"
+            />
+          </div>
           <div className="mb-4">
             <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
               Message
@@ -586,9 +828,9 @@ const Notifications = () => {
             </div>
             <button
               onClick={handleSendNotification}
-              disabled={sendingNotification || selectedRecords.length === 0 || !message.trim()}
+              disabled={sendingNotification || selectedRecords.length === 0 || !subject.trim() || !message.trim()}
               className={`px-4 py-2 rounded ${
-                sendingNotification || selectedRecords.length === 0 || !message.trim()
+                sendingNotification || selectedRecords.length === 0 || !subject.trim() || !message.trim()
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-[#861F41] text-white hover:bg-[#6e1935]'
               } transition`}
@@ -599,6 +841,24 @@ const Notifications = () => {
         </div>
       </main>
       <Footer />
+      
+      {/* Template Modals */}
+      <MessageTemplateModal
+        isOpen={showAddTemplateModal}
+        onClose={() => setShowAddTemplateModal(false)}
+        onSave={handleAddTemplate}
+        template={null}
+      />
+      
+      <MessageTemplateModal
+        isOpen={showEditTemplateModal}
+        onClose={() => {
+          setShowEditTemplateModal(false);
+          setSelectedEditTemplate(null);
+        }}
+        onSave={handleUpdateTemplate}
+        template={selectedEditTemplate}
+      />
     </div>
   );
 };
