@@ -11,7 +11,6 @@ const AddDistributorModal = ({ isOpen, onClose, onConfirm }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate email
     if (!email || !email.includes('@')) {
       setError('Please enter a valid email address');
       return;
@@ -19,31 +18,47 @@ const AddDistributorModal = ({ isOpen, onClose, onConfirm }) => {
     
     setError('');
     setIsSubmitting(true);
-    
+  
     try {
-      // Here you would typically make an API call to add the distributor
-      // For now, we'll just simulate a successful response
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Call the onConfirm callback with the email
+      // Create the payload
+      const distributorName = email.split('@')[0]; 
+      const setPasswordLink = `https://yourdomain.com/set-password?email=${encodeURIComponent(email)}`;
+  
+
+      const response = await fetch('/api/notify-new-distributor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          distributorName: distributorName,
+          setPasswordLink: setPasswordLink,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send distributor notification');
+      }
+  
+      // Call onConfirm if needed
       if (onConfirm) {
         onConfirm(email);
       }
-      
-      // Show success message
+  
       setSuccess(true);
-      
-      // Reset form
       setEmail('');
       
-      // Close modal after 3 seconds
       setTimeout(() => {
         setSuccess(false);
         onClose();
       }, 3000);
+  
     } catch (err) {
       console.error('Error adding distributor:', err);
-      setError('Failed to add distributor. Please try again.');
+      setError(err.message || 'Failed to add distributor. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
