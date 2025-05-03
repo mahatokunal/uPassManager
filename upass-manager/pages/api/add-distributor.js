@@ -1,5 +1,6 @@
 // pages/api/add-distributor.js
 import pool from '../../backend-api/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -34,10 +35,13 @@ export default async function handler(req, res) {
         message: 'Distributor account updated successfully'
       });
     } else {
+      // Generate a UUID for the new user
+      const uuid = uuidv4();
+      
       // Insert a new user with role 'distributor'
       await pool.query(
-        'INSERT INTO users (email, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?)',
-        [email, firstName, lastName, password, 'distributor']
+        'INSERT INTO users (UUID, email, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?, ?)',
+        [uuid, email, firstName, lastName, password, 'distributor']
       );
 
       return res.status(201).json({

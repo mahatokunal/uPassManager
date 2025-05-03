@@ -1,5 +1,6 @@
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import pool from '../../backend-api/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -52,7 +53,7 @@ U-Pass Management
       FunctionName: "CS5934_G6_SES",
       InvocationType: "RequestResponse",
       Payload: Buffer.from(JSON.stringify(payload)),
-    });
+wwwwww    });
 
     const response = await lambda.send(command);
 
@@ -74,10 +75,13 @@ U-Pass Management
       );
 
       if (existingUsers.length === 0) {
+        // Generate a UUID for the new user
+        const uuid = uuidv4();
+        
         // Insert a new user with role 'distributor' and a temporary password
         await pool.query(
-          'INSERT INTO users (email, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?)',
-          [email, distributorName, '', 'TEMPORARY_PASSWORD_CHANGE_REQUIRED', 'distributor']
+          'INSERT INTO users (UUID, email, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?, ?)',
+          [uuid, email, distributorName, '', 'TEMPORARY_PASSWORD_CHANGE_REQUIRED', 'distributor']
         );
       }
     } catch (dbErr) {
