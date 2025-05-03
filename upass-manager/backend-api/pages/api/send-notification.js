@@ -28,10 +28,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { recipients, message } = req.body;
+  const { recipients, subject, message } = req.body;
   
   if (!recipients || !Array.isArray(recipients) || recipients.length === 0) {
     return res.status(400).json({ message: 'Recipients are required and must be an array' });
+  }
+
+  if (!subject || typeof subject !== 'string' || subject.trim() === '') {
+    return res.status(400).json({ message: 'Subject is required and cannot be empty' });
   }
 
   if (!message || typeof message !== 'string' || message.trim() === '') {
@@ -46,6 +50,7 @@ export default async function handler(req, res) {
     // Prepare the payload for the Lambda function
     const payload = {
       recipients: recipients,
+      subject: subject,
       message: message
     };
     
