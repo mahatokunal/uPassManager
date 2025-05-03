@@ -1,5 +1,5 @@
 // backend-api/pages/api/get-all-records.js
-import pool from '../../db';
+import pool, { executeQuery } from '../../db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
   try {
     // Get total count of filtered records
     const countQuery = `SELECT COUNT(*) as total FROM ${table} ${whereClause}`;
-    const [countResult] = await pool.query(countQuery, whereParams);
+    const countResult = await executeQuery(countQuery, whereParams);
     const totalRecords = countResult[0].total;
     
     // Get paginated and filtered records
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
       LIMIT ? OFFSET ?
     `;
     
-    const [rows] = await pool.query(
+    const rows = await executeQuery(
       query,
       [...whereParams, limit, offset]
     );

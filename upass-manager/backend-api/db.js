@@ -9,8 +9,22 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE, // Database name
   port: process.env.DB_PORT,         // Database port (usually 3306)
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 20,               // Increased from 10 to 20
   queueLimit: 0,
+  debug: false,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000, // 10 seconds
 });
+
+// Helper function to execute queries safely with automatic connection release
+export async function executeQuery(query, params = []) {
+  try {
+    const [results] = await pool.query(query, params);
+    return results;
+  } catch (error) {
+    console.error('Database query error:', error);
+    throw error;
+  }
+}
 
 export default pool;
