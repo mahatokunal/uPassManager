@@ -59,10 +59,15 @@ function parseCookies(cookieString) {
  * @returns {Promise<Object>} - An object with either { user } on success or { error } on failure.
  */
 export async function authenticateUser(email, password) {
+  let connection;
   try {
     console.log("email = ", email);
+    
+    // Get a connection from the pool
+    connection = await pool.getConnection();
+    
     // Query the database for a user with the given email.
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
 
     if (rows.length === 0) {
       // If no user is found, return an error.
@@ -81,7 +86,13 @@ export async function authenticateUser(email, password) {
     return { user };
   } catch (err) {
     console.error('Authentication error:', err);
-    return { error: 'Internal server error' };
+    return { error: err.message || 'Internal server error' };
+  } finally {
+    // Always release the connection back to the pool
+    if (connection) {
+      connection.release();
+      console.log('Database connection released');
+    }
   }
 }
 
