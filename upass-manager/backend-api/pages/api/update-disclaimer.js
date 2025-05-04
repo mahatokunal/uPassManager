@@ -1,5 +1,5 @@
 // backend-api/pages/api/update-disclaimer.js
-import pool from '../../db';
+import pool, { withConnection } from '../../db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -26,32 +26,43 @@ export default async function handler(req, res) {
     console.log('Database name:', process.env.DB_DATABASE);
     console.log('Database port:', process.env.DB_PORT);
     
-    // Update with numeric 1 (boolean true) as specified by the database schema
-    console.log('Updating Disclaimer_Signed to 1 (boolean true)');
-    const [result] = await pool.query(
-      'UPDATE u_pass_manager_current SET Disclaimer_Signed = 1 WHERE Student_ID = ?',
-      [pid]
-    );
-    console.log('Update result:', result);
-
-    if (result.affectedRows === 0) {
-      console.log('No rows affected. Checking if record exists...');
-      
-      // Check if the record exists
-      const [rows] = await pool.query(
-        'SELECT * FROM u_pass_manager_current WHERE Student_ID = ?',
+    // Use the withConnection wrapper to ensure connection is properly managed
+    const result = await withConnection(async (connection) => {
+      // Update with numeric 1 (boolean true) as specified by the database schema
+      console.log('Updating Disclaimer_Signed to 1 (boolean true)');
+      const [result] = await connection.query(
+        'UPDATE u_pass_manager_current SET Disclaimer_Signed = 1 WHERE Student_ID = ?',
         [pid]
       );
-      
-      if (rows.length === 0) {
-        return res.status(404).json({ message: 'No record found for the provided PID' });
-      } else {
-        console.log('Record exists but not updated. Current value:', rows[0].Disclaimer_Signed);
-        return res.status(200).json({ 
-          message: 'Record found but not updated. May already be signed.',
-          success: true
-        });
+      console.log('Update result:', result);
+
+      if (result.affectedRows === 0) {
+        console.log('No rows affected. Checking if record exists...');
+        
+        // Check if the record exists
+        const [rows] = await connection.query(
+          'SELECT * FROM u_pass_manager_current WHERE Student_ID = ?',
+          [pid]
+        );
+        
+        if (rows.length === 0) {
+          return { notFound: true };
+        } else {
+          console.log('Record exists but not updated. Current value:', rows[0].Disclaimer_Signed);
+          return { alreadySigned: true, record: rows[0] };
+        }
       }
+      
+      return { updated: true, result };
+    });
+    
+    if (result.notFound) {
+      return res.status(404).json({ message: 'No record found for the provided PID' });
+    } else if (result.alreadySigned) {
+      return res.status(200).json({ 
+        message: 'Record found but not updated. May already be signed.',
+        success: true
+      });
     }
 
     // Return success message

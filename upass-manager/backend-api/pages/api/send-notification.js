@@ -1,5 +1,5 @@
 // backend-api/pages/api/send-notification.js
-import pool, { executeQuery } from '../../db';
+import pool, { executeQuery, withConnection } from '../../db';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from 'dotenv';
 

@@ -1,5 +1,5 @@
 // backend-api/pages/api/update-student.js
-import pool from '../../db';
+import pool, { withConnection } from '../../db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -82,11 +82,16 @@ export default async function handler(req, res) {
     // Add Student_ID to query params
     queryParams.push(Student_ID);
     
-    // Execute the update query
-    const [result] = await pool.query(
-      `UPDATE u_pass_manager_current SET ${updateFields.join(', ')} WHERE Student_ID = ?`,
-      queryParams
-    );
+    // Use the withConnection wrapper to ensure connection is properly managed
+    const result = await withConnection(async (connection) => {
+      // Execute the update query
+      const [result] = await connection.query(
+        `UPDATE u_pass_manager_current SET ${updateFields.join(', ')} WHERE Student_ID = ?`,
+        queryParams
+      );
+      
+      return result;
+    });
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'No record found for the provided Student ID' });

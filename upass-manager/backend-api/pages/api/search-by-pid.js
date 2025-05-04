@@ -1,5 +1,5 @@
 // backend-api/pages/api/search-by-pid.js
-import pool from '../../db';
+import pool, { withConnection } from '../../db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -18,20 +18,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Query the database for the U-Pass record using Student_ID (PID)
-    const [rows] = await pool.query(
-      'SELECT * FROM u_pass_manager_current WHERE Student_ID = ?',
-      [pid]
-    );
-
-    if (rows.length === 0) {
+    // Use the withConnection wrapper to ensure connection is properly managed
+    const result = await withConnection(async (connection) => {
+      // Query the database for the U-Pass record using Student_ID (PID)
+      const [rows] = await connection.query(
+        'SELECT * FROM u_pass_manager_current WHERE Student_ID = ?',
+        [pid]
+      );
+      
+      return rows;
+    });
+    
+    if (result.length === 0) {
       return res.status(404).json({ message: 'No record found for the provided PID' });
     }
 
     // Return the U-Pass record
     return res.status(200).json({ 
       message: 'Record found',
-      data: rows[0]
+      data: result[0]
     });
   } catch (error) {
     console.error('Database error:', error);
