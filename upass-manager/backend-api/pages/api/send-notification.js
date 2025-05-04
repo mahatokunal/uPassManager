@@ -1,3 +1,8 @@
+/**
+ * @file send-notification.js
+ * @description API endpoint for sending email notifications via AWS Lambda
+ * @module backend-api/pages/api/send-notification
+ */
 // backend-api/pages/api/send-notification.js
 import pool, { executeQuery } from '../../db';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
@@ -6,7 +11,10 @@ import dotenv from 'dotenv';
 // Load environment variables from .env file
 dotenv.config();
 
-// Initialize Lambda client
+/**
+ * AWS Lambda client for invoking the email notification service
+ * @constant {LambdaClient}
+ */
 const lambda = new LambdaClient({ 
   region: process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS_REGION || "us-east-2",
   credentials: {
@@ -20,9 +28,47 @@ console.log('AWS Region:', process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS
 console.log('AWS Access Key ID:', process.env.AWS_ACCESS_KEY_ID ? '***' + process.env.AWS_ACCESS_KEY_ID.slice(-5) : 'Not found');
 console.log('NEXT_PUBLIC_AWS_ACCESS_KEY_ID:', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ? '***' + process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID.slice(-5) : 'Not found');
 
-// Lambda function name
+/**
+ * Lambda function name for the email service
+ * @constant {string}
+ */
 const LAMBDA_FUNCTION_NAME = process.env.LAMBDA_FUNCTION_NAME || 'CS5934_G6_SES';
 
+/**
+ * Handles sending notifications to multiple recipients using AWS Lambda and SES
+ * 
+ * @async
+ * @function handler
+ * @param {Object} req - The HTTP request object
+ * @param {Object} req.body - The request body
+ * @param {string[]} req.body.recipients - Array of email addresses to send notifications to
+ * @param {string} req.body.subject - Email subject line
+ * @param {string} req.body.message - Email body content (HTML supported)
+ * @param {Object} res - The HTTP response object
+ * @returns {Object} JSON response with notification sending results
+ * @throws {Error} If Lambda invocation fails or returns an error
+ * 
+ * @example
+ * // POST /api/send-notification
+ * // Request body:
+ * // {
+ * //   "recipients": ["student1@example.com", "student2@example.com"],
+ * //   "subject": "UPass Card Available",
+ * //   "message": "<p>Your UPass card is ready for pickup.</p>"
+ * // }
+ * // Response:
+ * // {
+ * //   "message": "Notifications sent successfully via Lambda",
+ * //   "success": true,
+ * //   "sent": 2,
+ * //   "total": 2,
+ * //   "results": {
+ * //     "successful": ["student1@example.com", "student2@example.com"],
+ * //     "failed": []
+ * //   },
+ * //   "timestamp": "2025-05-04 12:34:56"
+ * // }
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });

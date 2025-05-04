@@ -1,8 +1,45 @@
+/**
+ * @file EditStudentModal component for editing student UPass information
+ * @description Modal component that allows administrators to edit student information related to UPass cards,
+ *              including active cards, replacement status, disclaimer signature, and distribution details
+ * @module app/components/EditStudentModal
+ */
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { maskPid } from '../utils/maskPid';
 
+/**
+ * Modal component for editing student UPass record information
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Function to call when the modal is closed
+ * @param {Function} props.onSave - Function to call when the form is submitted with updated student data
+ * @param {Object} props.studentInfo - Student record information
+ * @param {string} props.studentInfo.Student_ID - Student's ID (PID)
+ * @param {string} props.studentInfo.First_Name - Student's first name
+ * @param {string} props.studentInfo.Last_Name - Student's last name
+ * @param {string} props.studentInfo.Email - Student's email address
+ * @param {string} [props.studentInfo.Active_U_Pass_Card] - Student's current UPass card number
+ * @param {string} [props.studentInfo.Replaced_U_Pass_Card] - Student's replaced UPass card number
+ * @param {boolean} [props.studentInfo.Disclaimer_Signed] - Whether student has signed disclaimer
+ * @param {string} [props.studentInfo.Metro_Acct] - Student's Metro account information
+ * @param {string} [props.studentInfo.Distribution_Date] - Date UPass was distributed
+ * @param {string} [props.studentInfo.Picked_Up_By] - Person who picked up the UPass
+ * @param {string} [props.studentInfo.Notes] - Additional notes about the student
+ * @param {string} [props.studentInfo.U_Pass_ID] - Internal UPass ID reference
+ * @returns {React.ReactElement|null} The EditStudentModal component or null if not open
+ * 
+ * @example
+ * <EditStudentModal
+ *   isOpen={showEditModal}
+ *   onClose={() => setShowEditModal(false)}
+ *   onSave={handleUpdateStudent}
+ *   studentInfo={selectedStudent}
+ * />
+ */
 const EditStudentModal = ({ isOpen, onClose, onSave, studentInfo }) => {
   // State for editable fields only
   const [formData, setFormData] = useState({

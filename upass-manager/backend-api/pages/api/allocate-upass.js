@@ -1,6 +1,39 @@
 // backend-api/pages/api/allocate-upass.js
 import pool from '../../db';
 
+/**
+ * API endpoint for allocating a U-Pass card to a student
+ * 
+ * @async
+ * @function allocateUpass
+ * @param {object} req - The request object
+ * @param {object} req.body - The request body
+ * @param {string} req.body.pid - The student PID (9-digit number)
+ * @param {string} req.body.upassId - The U-Pass card number (20-digit number)
+ * @param {object} res - The response object
+ * @returns {object} JSON response with success message or error
+ * 
+ * @example
+ * // Request:
+ * // POST /api/allocate-upass
+ * // {
+ * //   "pid": "123456789",
+ * //   "upassId": "12345678901234567890"
+ * // }
+ * 
+ * // Success Response:
+ * // {
+ * //   "message": "U-Pass allocated successfully",
+ * //   "success": true,
+ * //   "isReplacement": false
+ * // }
+ * 
+ * // Error Response:
+ * // {
+ * //   "message": "Disclaimer must be signed before allocating a U-Pass",
+ * //   "disclaimerSigned": false
+ * // }
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -72,7 +105,7 @@ export default async function handler(req, res) {
         return res.status(404).json({ message: 'Failed to update record' });
       }
     }
-
+    
     // Return success message
     return res.status(200).json({ 
       message: currentCard ? 'U-Pass replaced successfully' : 'U-Pass allocated successfully',

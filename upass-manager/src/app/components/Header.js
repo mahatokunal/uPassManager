@@ -3,16 +3,39 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import logo from '../assets/images/virginia-tech-logo.png'; // Adjust the path to your logo
 
+/**
+ * @typedef {Object} HeaderProps
+ * No props required for this component
+ */
+
+/**
+ * Header component for the UPass Manager application
+ * 
+ * This component displays the application header with the Virginia Tech logo,
+ * UPass Manager title, and a logout button if the user is logged in.
+ * 
+ * @returns {JSX.Element} Header component
+ * @example
+ * // Usage in a page component
+ * <Header />
+ */
 const Header = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
+  /**
+   * Check if user is logged in on component mount
+   */
   useEffect(() => {
     // Check if user is logged in
     const userRole = localStorage.getItem('userRole');
     setIsLoggedIn(!!userRole);
   }, []);
   
+  /**
+   * Handle user logout
+   * Clears user data from localStorage and redirects to login page
+   */
   const handleLogout = () => {
     // Clear user data from localStorage
     localStorage.removeItem('userRole');
