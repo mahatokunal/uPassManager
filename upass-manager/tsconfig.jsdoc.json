@@ -1,0 +1,21 @@
+// TypeScript configuration file for JSDoc
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": false,
+    "declaration": false,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "removeComments": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*", "pages/**/*", "backend-api/**/*", "backend-common/**/*"],
+  "exclude": ["node_modules", "docs"]
+}
