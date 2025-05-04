@@ -40,4 +40,15 @@ checkPoolHealth();
 // Set up periodic health checks (every 5 minutes)
 setInterval(checkPoolHealth, 300000);
 
+// Add this function before the export statement
+export const executeQuery = async (sql, params = []) => {
+  try {
+    const [results] = await pool.query(sql, params);
+    return results;
+  } catch (error) {
+    console.error('Database query error:', error);
+    throw error;
+  }
+};
+
 export default pool;
