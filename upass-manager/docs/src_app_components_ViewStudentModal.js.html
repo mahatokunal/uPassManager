@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>src/app/components/ViewStudentModal.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/yourusername/upass-manager" target="_blank" >GitHub</a></h2><h3>Modules</h3><ul><li><a href="module-api_search-by-pid.html">api/search-by-pid</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-api_search-by-pid.html#~handler">handler</a></li></ul></li><li><a href="module-app_components_DisclaimerModal.html">app/components/DisclaimerModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_DisclaimerModal.html#~DisclaimerModal">DisclaimerModal</a></li></ul></li><li><a href="module-app_components_EditStudentModal.html">app/components/EditStudentModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_EditStudentModal.html#~EditStudentModal">EditStudentModal</a></li></ul></li><li><a href="module-app_components_Footer.html">app/components/Footer</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_Footer.html#~Footer">Footer</a></li></ul></li><li><a href="module-app_components_MessageTemplateModal.html">app/components/MessageTemplateModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_MessageTemplateModal.html#~MessageTemplateModal">MessageTemplateModal</a></li></ul></li><li><a href="module-app_components_NFCModal.html">app/components/NFCModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_NFCModal.html#~NFCModal">NFCModal</a></li></ul></li><li><a href="module-app_components_UploadModal.html">app/components/UploadModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_UploadModal.html#~UploadModal">UploadModal</a></li></ul></li><li><a href="module-app_components_ViewStudentModal.html">app/components/ViewStudentModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_ViewStudentModal.html#~ViewStudentModal">ViewStudentModal</a></li></ul></li><li><a href="module-app_components_VisualizationOptionsModal.html">app/components/VisualizationOptionsModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_VisualizationOptionsModal.html#~VisualizationOptionsModal">VisualizationOptionsModal</a></li></ul></li><li><a href="module-backend-api_db.html">backend-api/db</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_db.html#~executeQuery">executeQuery</a></li></ul></li><li><a href="module-backend-api_pages_api_get-all-records.html">backend-api/pages/api/get-all-records</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_get-all-records.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_pages_api_login.html">backend-api/pages/api/login</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_login.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_pages_api_message-templates.html">backend-api/pages/api/message-templates</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~createTemplate">createTemplate</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~deleteTemplate">deleteTemplate</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~getTemplates">getTemplates</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~handler">handler</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~updateTemplate">updateTemplate</a></li></ul></li><li><a href="module-backend-api_pages_api_send-notification.html">backend-api/pages/api/send-notification</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_send-notification.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_pages_api_update-student.html">backend-api/pages/api/update-student</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_update-student.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_update-disclaimer.html">backend-api/update-disclaimer</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_update-disclaimer.html#~handler">handler</a></li></ul></li><li><a href="module-backend-common_auth.html">backend-common/auth</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-common_auth.html#.authenticateUser">authenticateUser</a></li><li data-type='method' style='display: none;'><a href="module-backend-common_auth.html#.verifyToken">verifyToken</a></li></ul></li><li><a href="module-components_AddDistributorModal.html">components/AddDistributorModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-components_AddDistributorModal.html#~AddDistributorModal">AddDistributorModal</a></li><li data-type='method' style='display: none;'><a href="module-components_AddDistributorModal.html#~handleSubmit">handleSubmit</a></li></ul></li><li><a href="module-context_LoadingContext.html">context/LoadingContext</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-context_LoadingContext.html#.LoadingProvider">LoadingProvider</a></li><li data-type='method' style='display: none;'><a href="module-context_LoadingContext.html#.useLoading">useLoading</a></li></ul></li><li><a href="module-nfc-bridge_nfc-server.html">nfc-bridge/nfc-server</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-nfc-bridge_nfc-server.html#~bytesToHexString">bytesToHexString</a></li><li data-type='method' style='display: none;'><a href="module-nfc-bridge_nfc-server.html#~formatCardNumber">formatCardNumber</a></li><li data-type='method' style='display: none;'><a href="module-nfc-bridge_nfc-server.html#~getChecksum">getChecksum</a></li></ul></li><li><a href="module-views_Dashboard.html">views/Dashboard</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-views_Dashboard.html#~Dashboard">Dashboard</a></li></ul></li><li><a href="module-views_UPassCollectionStats.html">views/UPassCollectionStats</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~CustomTooltip">CustomTooltip</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~UPassCollectionStats">UPassCollectionStats</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~applyFilters">applyFilters</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~fetchData">fetchData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~generateDisclaimerSignedData">generateDisclaimerSignedData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~generateReplacementData">generateReplacementData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~generateUPassCollectionData">generateUPassCollectionData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~renderCustomizedLabel">renderCustomizedLabel</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Header">Header</a></li><li><a href="global.html#HeaderProps">HeaderProps</a></li><li><a href="global.html#allocateUpass">allocateUpass</a></li><li><a href="global.html#maskPid">maskPid</a></li><li><a href="global.html#pcsc">pcsc</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">src/app/components/ViewStudentModal.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file ViewStudentModal component for displaying detailed student information
+ * @description Modal dialog that displays complete information about a student record
+ * @module app/components/ViewStudentModal
+ */
+"use client";
+
+import React from 'react';
+import { maskPid } from '../utils/maskPid';
+
+/**
+ * Modal component for viewing detailed student information
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Function to call when the modal is closed
+ * @param {Object} props.studentInfo - Student record information
+ * @param {string} props.studentInfo.Student_ID - Student ID number (will be masked for display)
+ * @param {string} props.studentInfo.First_Name - Student's first name
+ * @param {string} props.studentInfo.Last_Name - Student's last name
+ * @param {string} props.studentInfo.Email - Student's email address
+ * @param {string} [props.studentInfo.Active_U_Pass_Card] - Current active U-Pass card number
+ * @param {string} [props.studentInfo.Replaced_U_Pass_Card] - Previous replaced U-Pass card number
+ * @param {boolean} props.studentInfo.Disclaimer_Signed - Whether student has signed the disclaimer
+ * @param {string} [props.studentInfo.Metro_Acct] - Student's Metro account number
+ * @param {string} [props.studentInfo.Distribution_Date] - Date when U-Pass was distributed
+ * @param {string} [props.studentInfo.Picked_Up_By] - Person who picked up the U-Pass
+ * @param {string} [props.studentInfo.U_Pass_ID] - Unique identifier for the U-Pass
+ * @param {string} [props.studentInfo.Notes] - Additional notes about the student
+ * @returns {React.ReactElement|null} The ViewStudentModal component or null if not open
+ * 
+ * @example
+ * &lt;ViewStudentModal
+ *   isOpen={showModal}
+ *   onClose={() => setShowModal(false)}
+ *   studentInfo={{
+ *     Student_ID: '9000123456',
+ *     First_Name: 'John',
+ *     Last_Name: 'Smith',
+ *     Email: 'john.smith@example.edu',
+ *     Active_U_Pass_Card: '1234567890',
+ *     Disclaimer_Signed: true,
+ *     Distribution_Date: '2025-04-01'
+ *   }}
+ * />
+ */
+const ViewStudentModal = ({ isOpen, onClose, studentInfo }) => {
+  if (!isOpen) return null;
+
+  return (
+    &lt;div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}>
+      &lt;div className="bg-white rounded-lg p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+        &lt;h2 className="text-xl font-bold mb-4 text-[#861F41]">Student Record&lt;/h2>
+        
+        {/* Student information section */}
+        {studentInfo &amp;&amp; (
+          &lt;>
+            &lt;div className="mb-6">
+              &lt;h3 className="text-md font-medium text-gray-700 mb-2">Student Information&lt;/h3>
+              &lt;div className="bg-gray-100 p-4 rounded">
+                &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Student ID&lt;/p>
+                    &lt;p className="font-medium">{maskPid(studentInfo.Student_ID)}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">First Name&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.First_Name}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Last Name&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Last_Name}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Email&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Email}&lt;/p>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            
+            {/* Other fields section */}
+            &lt;div className="mb-6">
+              &lt;h3 className="text-md font-medium text-gray-700 mb-2">U-Pass Information&lt;/h3>
+              &lt;div className="bg-gray-100 p-4 rounded">
+                &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Active U-Pass&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Active_U_Pass_Card || 'Not Allocated'}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Replaced U-Pass&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Replaced_U_Pass_Card || 'None'}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Disclaimer Signed&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Disclaimer_Signed ? 'Yes' : 'No'}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Metro Account&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Metro_Acct || 'None'}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Distribution Date&lt;/p>
+                    &lt;p className="font-medium">
+                      {studentInfo.Distribution_Date 
+                        ? (studentInfo.Distribution_Date.includes('T') 
+                            ? studentInfo.Distribution_Date.split('T')[0] 
+                            : studentInfo.Distribution_Date)
+                        : 'Not Distributed'}
+                    &lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">Picked Up By&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.Picked_Up_By || 'Not Picked Up'}&lt;/p>
+                  &lt;/div>
+                  &lt;div>
+                    &lt;p className="text-sm text-gray-500">U-Pass ID&lt;/p>
+                    &lt;p className="font-medium">{studentInfo.U_Pass_ID || 'None'}&lt;/p>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            
+            {/* Notes section */}
+            &lt;div className="mb-6">
+              &lt;h3 className="text-md font-medium text-gray-700 mb-2">Notes&lt;/h3>
+              &lt;div className="bg-gray-100 p-4 rounded">
+                &lt;p className="text-sm">{studentInfo.Notes || 'No notes available'}&lt;/p>
+              &lt;/div>
+            &lt;/div>
+          &lt;/>
+        )}
+        
+        &lt;div className="flex justify-end mt-6">
+          &lt;button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+          >
+            Close
+          &lt;/button>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default ViewStudentModal;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Sun May 04 2025 17:56:37 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>
