@@ -4,21 +4,12 @@
     "includePattern": "\\.(js|jsx|ts|tsx)$",
     "excludePattern": "(node_modules/|docs)"
   },
-  "plugins": ["plugins/markdown", "node_modules/jsdoc-plugin-typescript"],
+  "plugins": ["plugins/markdown"],
   "opts": {
     "encoding": "utf8",
     "destination": "./docs/",
     "recurse": true,
-    "template": "node_modules/docdash",
-    "verbose": true
-  },
-  "typescript": {
-    "moduleRoot": "./",
-    "configFile": "./tsconfig.jsdoc.json"
-  },
-  "tags": {
-    "allowUnknownTags": true,
-    "dictionaries": ["jsdoc", "typescript"]
+    "template": "node_modules/docdash"
   },
   "templates": {
     "cleverLinks": false,
