@@ -1,8 +1,36 @@
+/**
+ * @file DisclaimerModal component for managing UPass disclaimer signatures
+ * @description Provides a modal interface for confirming student disclaimer signatures
+ * @module app/components/DisclaimerModal
+ */
 "use client";
 
 import React from 'react';
 import { maskPid } from '../utils/maskPid';
 
+/**
+ * Modal component for confirming that a student has signed the UPass disclaimer
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Function to call when the "Not Signed, Cancel" button is clicked
+ * @param {Function} props.onConfirm - Function to call when the "Signed, Proceed" button is clicked
+ * @param {Object} props.studentInfo - Information about the student
+ * @param {string} props.studentInfo.First_Name - Student's first name
+ * @param {string} props.studentInfo.Last_Name - Student's last name
+ * @param {string} props.studentInfo.Student_ID - Student's ID (PID)
+ * @param {string} props.studentInfo.Email - Student's email address
+ * @returns {React.ReactElement|null} The DisclaimerModal component or null if not open
+ * 
+ * @example
+ * <DisclaimerModal
+ *   isOpen={showDisclaimerModal}
+ *   onClose={() => setShowDisclaimerModal(false)}
+ *   onConfirm={handleDisclaimerConfirm}
+ *   studentInfo={selectedStudent}
+ * />
+ */
 const DisclaimerModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   if (!isOpen) return null;
 

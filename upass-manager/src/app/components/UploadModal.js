@@ -1,17 +1,54 @@
+/**
+ * @file UploadModal component for file upload functionality
+ * @description Provides a modal interface for uploading files via drag-and-drop or file browser
+ * @module app/components/UploadModal
+ */
 import React, { useState } from 'react';
 
+/**
+ * Modal component for file uploads with drag-and-drop functionality
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Function to call when the modal is closed
+ * @param {Function} props.onFileChange - Function to call when a file is selected
+ * @param {Function} props.onUpload - Function to call when the upload button is clicked
+ * @param {File|null} props.selectedFile - The currently selected file object
+ * @returns {React.ReactElement|null} The UploadModal component or null if not open
+ * 
+ * @example
+ * <UploadModal
+ *   isOpen={isModalOpen}
+ *   onClose={() => setIsModalOpen(false)}
+ *   onFileChange={handleFileChange}
+ *   onUpload={handleUpload}
+ *   selectedFile={selectedFile}
+ * />
+ */
 const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, selectedFile }) => {
   const [dragging, setDragging] = useState(false);
 
+  /**
+   * Handle dragover event for the drop zone
+   * @param {React.DragEvent<HTMLDivElement>} e - The dragover event
+   */
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragging(true);
   };
 
+  /**
+   * Handle dragleave event for the drop zone
+   */
   const handleDragLeave = () => {
     setDragging(false);
   };
 
+  /**
+   * Handle file drop event for the drop zone
+   * @param {React.DragEvent<HTMLDivElement>} e - The drop event
+   */
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);

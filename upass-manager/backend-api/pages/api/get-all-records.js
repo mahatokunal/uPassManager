@@ -1,6 +1,49 @@
+/**
+ * @file get-all-records.js
+ * @description API endpoint for retrieving UPass records with pagination and filtering
+ * @module backend-api/pages/api/get-all-records
+ */
 // backend-api/pages/api/get-all-records.js
 import pool from '../../db';
 
+/**
+ * Handles retrieving UPass records with pagination and filtering options
+ * 
+ * @async
+ * @function handler
+ * @param {Object} req - The HTTP request object
+ * @param {Object} req.query - The query parameters
+ * @param {number} [req.query.page=1] - Page number for pagination
+ * @param {number} [req.query.limit=10] - Number of records per page
+ * @param {string} [req.query.table='u_pass_manager_current'] - Table to query from
+ * @param {string} [req.query.Student_ID] - Filter by Student ID
+ * @param {string} [req.query.First_Name] - Filter by First Name
+ * @param {string} [req.query.Last_Name] - Filter by Last Name
+ * @param {string} [req.query.Email] - Filter by Email
+ * @param {string} [req.query.Active_U_Pass_Card] - Filter by Active U-Pass Card
+ * @param {boolean} [req.query.Disclaimer_Signed] - Filter by Disclaimer Signed status
+ * @param {string} [req.query.Metro_Acct] - Filter by Metro Account
+ * @param {string} [req.query.Distribution_Date] - Filter by Distribution Date
+ * @param {string} [req.query.Picked_Up_By] - Filter by Picked Up By
+ * @param {Object} res - The HTTP response object
+ * @returns {Object} JSON response with records and pagination metadata
+ * @throws {Error} If database query fails
+ * 
+ * @example
+ * // GET /api/get-all-records?page=1&limit=10&table=u_pass_manager_current&Last_Name=Smith
+ * // Response:
+ * // {
+ * //   "records": [...],
+ * //   "pagination": {
+ * //     "page": 1,
+ * //     "limit": 10,
+ * //     "totalRecords": 50,
+ * //     "totalPages": 5,
+ * //     "hasNextPage": true,
+ * //     "hasPrevPage": false
+ * //   }
+ * // }
+ */
 export default async function handler(req, res) {
   let connection;
   

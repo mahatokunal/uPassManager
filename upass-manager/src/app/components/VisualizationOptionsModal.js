@@ -1,9 +1,29 @@
+/**
+ * @file VisualizationOptionsModal component for selecting visualization types
+ * @description Modal that allows users to choose between different data visualization options
+ * @module app/components/VisualizationOptionsModal
+ */
 "use client";
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLoading } from '../context/LoadingContext';
 
+/**
+ * Modal component for selecting between different data visualization options
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Function to call when the modal is closed
+ * @returns {React.ReactElement|null} The VisualizationOptionsModal component or null if not open
+ * 
+ * @example
+ * <VisualizationOptionsModal
+ *   isOpen={showVisualizationOptions}
+ *   onClose={() => setShowVisualizationOptions(false)}
+ * />
+ */
 const VisualizationOptionsModal = ({ isOpen, onClose }) => {
   const router = useRouter();
   const { isLoading, setLoading } = useLoading();
