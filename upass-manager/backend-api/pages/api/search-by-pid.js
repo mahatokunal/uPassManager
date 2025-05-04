@@ -46,7 +46,7 @@ export default async function handler(req, res) {
   try {
     // Query the database for the U-Pass record using Student_ID (PID)
     const [rows] = await pool.query(
-      'SELECT * FROM u_pass_manager WHERE Student_ID = ?',
+      'SELECT * FROM u_pass_manager_current WHERE Student_ID = ?',
       [pid]
     );
 
