@@ -1,50 +1,8 @@
-/**
- * @file ViewStudentModal component for displaying detailed student information
- * @description Modal dialog that displays complete information about a student record
- * @module app/components/ViewStudentModal
- */
 "use client";
 
 import React from 'react';
 import { maskPid } from '../utils/maskPid';
 
-/**
- * Modal component for viewing detailed student information
- * 
- * @component
- * @param {Object} props - Component props
- * @param {boolean} props.isOpen - Whether the modal is open
- * @param {Function} props.onClose - Function to call when the modal is closed
- * @param {Object} props.studentInfo - Student record information
- * @param {string} props.studentInfo.Student_ID - Student ID number (will be masked for display)
- * @param {string} props.studentInfo.First_Name - Student's first name
- * @param {string} props.studentInfo.Last_Name - Student's last name
- * @param {string} props.studentInfo.Email - Student's email address
- * @param {string} [props.studentInfo.Active_U_Pass_Card] - Current active U-Pass card number
- * @param {string} [props.studentInfo.Replaced_U_Pass_Card] - Previous replaced U-Pass card number
- * @param {boolean} props.studentInfo.Disclaimer_Signed - Whether student has signed the disclaimer
- * @param {string} [props.studentInfo.Metro_Acct] - Student's Metro account number
- * @param {string} [props.studentInfo.Distribution_Date] - Date when U-Pass was distributed
- * @param {string} [props.studentInfo.Picked_Up_By] - Person who picked up the U-Pass
- * @param {string} [props.studentInfo.U_Pass_ID] - Unique identifier for the U-Pass
- * @param {string} [props.studentInfo.Notes] - Additional notes about the student
- * @returns {React.ReactElement|null} The ViewStudentModal component or null if not open
- * 
- * @example
- * <ViewStudentModal
- *   isOpen={showModal}
- *   onClose={() => setShowModal(false)}
- *   studentInfo={{
- *     Student_ID: '9000123456',
- *     First_Name: 'John',
- *     Last_Name: 'Smith',
- *     Email: 'john.smith@example.edu',
- *     Active_U_Pass_Card: '1234567890',
- *     Disclaimer_Signed: true,
- *     Distribution_Date: '2025-04-01'
- *   }}
- * />
- */
 const ViewStudentModal = ({ isOpen, onClose, studentInfo }) => {
   if (!isOpen) return null;
 

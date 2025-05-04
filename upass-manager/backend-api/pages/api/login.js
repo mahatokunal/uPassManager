@@ -1,32 +1,6 @@
-/**
- * @file login.js
- * @description API endpoint for user authentication and login
- * @module backend-api/pages/api/login
- */
 // backend-api/pages/api/login.js
 import { authenticateUser, generateToken } from '../../../backend-common/auth'; // Adjust the relative path as needed
 
-/**
- * API handler for user authentication
- * Validates credentials and returns user role upon successful login
- *
- * @async
- * @function handler
- * @param {Object} req - The HTTP request object
- * @param {Object} req.body - The request body
- * @param {string} req.body.email - User's email address
- * @param {string} req.body.password - User's password
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response with authentication result
- *
- * @example
- * // Example request:
- * // POST /api/login
- * // {
- * //   "email": "admin@example.com",
- * //   "password": "secure_password"
- * // }
- */
 export default async function handler(req, res) {
 
   //test comment

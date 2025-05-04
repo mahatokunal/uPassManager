@@ -1,20 +1,7 @@
-/**
- * @file API endpoint for managing message templates
- * @description Handles CRUD operations for message templates used in notifications
- * @module backend-api/pages/api/message-templates
- */
+// backend-api/pages/api/message-templates.js
 import pool, { executeQuery } from '../../db';
 import { verifyToken } from '../../../backend-common/auth';
 
-/**
- * Main handler for message templates API that routes to appropriate function based on HTTP method
- * 
- * @async
- * @function handler
- * @param {Object} req - The HTTP request object
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response based on the requested operation
- */
 export default async function handler(req, res) {
   // Verify the authentication token - temporarily allow all authenticated users
   try {
@@ -67,29 +54,7 @@ export default async function handler(req, res) {
   }
 }
 
-/**
- * Retrieves all message templates from the database
- * 
- * @async
- * @function getTemplates
- * @param {Object} req - The HTTP request object
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response containing all templates
- * 
- * @example
- * // Success response (200 OK)
- * {
- *   "templates": [
- *     {
- *       "id": 1,
- *       "title": "Welcome Message",
- *       "message": "Welcome to UPass program! Your card is ready for pickup.",
- *       "created_at": "2025-01-01T12:00:00Z",
- *       "updated_at": "2025-01-01T12:00:00Z"
- *     }
- *   ]
- * }
- */
+// Get all templates
 async function getTemplates(req, res) {
   try {
     const templates = await executeQuery(
@@ -102,37 +67,7 @@ async function getTemplates(req, res) {
   }
 }
 
-/**
- * Creates a new message template
- * 
- * @async
- * @function createTemplate
- * @param {Object} req - The HTTP request object
- * @param {Object} req.body - The request body
- * @param {string} req.body.title - Template title
- * @param {string} req.body.message - Template message content
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response indicating success and the created template
- * 
- * @example
- * // Request body
- * {
- *   "title": "Pickup Reminder",
- *   "message": "This is a reminder to pick up your UPass card."
- * }
- * 
- * // Success response (201 Created)
- * {
- *   "message": "Template created successfully",
- *   "template": {
- *     "id": 2,
- *     "title": "Pickup Reminder",
- *     "message": "This is a reminder to pick up your UPass card.",
- *     "created_at": "2025-05-04T14:30:00Z",
- *     "updated_at": "2025-05-04T14:30:00Z"
- *   }
- * }
- */
+// Create a new template
 async function createTemplate(req, res) {
   const { title, message } = req.body;
 
@@ -161,39 +96,7 @@ async function createTemplate(req, res) {
   }
 }
 
-/**
- * Updates an existing message template
- * 
- * @async
- * @function updateTemplate
- * @param {Object} req - The HTTP request object
- * @param {Object} req.body - The request body
- * @param {number} req.body.id - Template ID to update
- * @param {string} req.body.title - New template title
- * @param {string} req.body.message - New template message content
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response indicating success and the updated template
- * 
- * @example
- * // Request body
- * {
- *   "id": 2,
- *   "title": "Updated Pickup Reminder",
- *   "message": "This is an updated reminder to pick up your UPass card."
- * }
- * 
- * // Success response (200 OK)
- * {
- *   "message": "Template updated successfully",
- *   "template": {
- *     "id": 2,
- *     "title": "Updated Pickup Reminder",
- *     "message": "This is an updated reminder to pick up your UPass card.",
- *     "created_at": "2025-05-04T14:30:00Z",
- *     "updated_at": "2025-05-04T15:45:00Z"
- *   }
- * }
- */
+// Update an existing template
 async function updateTemplate(req, res) {
   const { id, title, message } = req.body;
 
@@ -226,26 +129,7 @@ async function updateTemplate(req, res) {
   }
 }
 
-/**
- * Deletes a message template
- * 
- * @async
- * @function deleteTemplate
- * @param {Object} req - The HTTP request object
- * @param {Object} req.query - The query parameters
- * @param {number} req.query.id - Template ID to delete
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response indicating success and the deleted template ID
- * 
- * @example
- * // Request query: ?id=2
- * 
- * // Success response (200 OK)
- * {
- *   "message": "Template deleted successfully",
- *   "id": "2"
- * }
- */
+// Delete a template
 async function deleteTemplate(req, res) {
   const { id } = req.query;
 

@@ -1,42 +1,7 @@
-/**
- * @file MessageTemplateModal component for creating and editing notification templates
- * @description Modal dialog that allows administrators to create and edit message templates used for notifications
- * @module app/components/MessageTemplateModal
- */
 "use client";
 
 import React, { useState, useEffect } from 'react';
 
-/**
- * Modal component for creating and editing notification message templates
- * 
- * @component
- * @param {Object} props - Component props
- * @param {boolean} props.isOpen - Whether the modal is open
- * @param {Function} props.onClose - Function to call when the modal is closed
- * @param {Function} props.onSave - Function to call with the template data when saving
- * @param {Object} [props.template] - Existing template data for editing mode
- * @param {string} [props.template.id] - Unique identifier for the template
- * @param {string} [props.template.title] - Title of the template
- * @param {string} [props.template.message] - Message content of the template
- * @returns {React.ReactElement|null} The MessageTemplateModal component or null if not open
- * 
- * @example
- * // For creating a new template
- * <MessageTemplateModal
- *   isOpen={showModal}
- *   onClose={() => setShowModal(false)}
- *   onSave={handleSaveTemplate}
- * />
- * 
- * // For editing an existing template
- * <MessageTemplateModal
- *   isOpen={showModal}
- *   onClose={() => setShowModal(false)}
- *   onSave={handleSaveTemplate}
- *   template={{ id: '123', title: 'Pickup Reminder', message: 'Your U-Pass is ready for pickup.' }}
- * />
- */
 const MessageTemplateModal = ({ isOpen, onClose, onSave, template }) => {
   const [title, setTitle] = useState(template?.title || '');
   const [message, setMessage] = useState(template?.message || '');

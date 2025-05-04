@@ -1,17 +1,7 @@
-/**
- * @file db.js
- * @description Database connection pool configuration and query utilities
- * @module backend-api/db
- */
-
+// db.js
 import mysql from 'mysql2/promise';
 
-/**
- * MySQL connection pool for managing database connections efficiently
- * Uses environment variables for database configuration
- * 
- * @type {import('mysql2/promise').Pool}
- */
+// Create a connection pool to manage multiple connections efficiently
 const pool = mysql.createPool({
   host: process.env.DB_HOST,         // AWS RDS endpoint
   user: process.env.DB_USER,         // Database username
@@ -19,40 +9,46 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE, // Database name
   port: process.env.DB_PORT,         // Database port (usually 3306)
   waitForConnections: true,
-  connectionLimit: 20,               // Increased from 10 to 20
+  connectionLimit: 25,               // Increased from 10 to 25
   queueLimit: 0,
-  debug: false,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 10000, // 10 seconds
+  enableKeepAlive: true,             // Enable keep-alive to prevent stale connections
+  keepAliveInitialDelay: 10000,      // 10 seconds
+  namedPlaceholders: true,           // More efficient query preparation
+  connectTimeout: 10000,             // 10 seconds connection timeout
+  idleTimeout: 60000,                // Close idle connections after 60 seconds
 });
 
-/**
- * Helper function to execute SQL queries safely with automatic connection release
- * 
- * @async
- * @function executeQuery
- * @param {string} query - SQL query string with placeholders
- * @param {Array} [params=[]] - Parameters to bind to query placeholders
- * @returns {Promise<Array>} Query results
- * @throws {Error} If query execution fails
- * 
- * @example
- * // Example usage:
- * try {
- *   const students = await executeQuery('SELECT * FROM students WHERE major = ?', ['Computer Science']);
- *   console.log(students);
- * } catch (error) {
- *   console.error('Query failed:', error);
- * }
- */
-export async function executeQuery(query, params = []) {
+// Function to check pool health and log connection stats
+const checkPoolHealth = async () => {
   try {
-    const [results] = await pool.query(query, params);
+    const connection = await pool.getConnection();
+    console.log('Database connection successful');
+    
+    // Get connection stats
+    const [rows] = await connection.query('SHOW STATUS LIKE "Conn%"');
+    console.log('Connection stats:', rows);
+    
+    connection.release();
+  } catch (error) {
+    console.error('Database connection health check failed:', error);
+  }
+};
+
+// Run health check on startup
+checkPoolHealth();
+
+// Set up periodic health checks (every 5 minutes)
+setInterval(checkPoolHealth, 300000);
+
+// Add this function before the export statement
+export const executeQuery = async (sql, params = []) => {
+  try {
+    const [results] = await pool.query(sql, params);
     return results;
   } catch (error) {
     console.error('Database query error:', error);
     throw error;
   }
-}
+};
 
 export default pool;

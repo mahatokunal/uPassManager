@@ -1,271 +1,319 @@
-# Development Guide
+# Development Guidelines
 
-## Overview
-
-This guide provides information for developers working on the UPass Manager application. It covers project structure, coding standards, development workflow, and other important technical details.
-
-## Project Structure
-
-The UPass Manager is built using Next.js with a modern project structure:
-
-```
-upass-manager/
-├── backend-api/        # Backend API handlers
-│   ├── db.js           # Database connection
-│   └── pages/
-│       └── api/        # API endpoint implementations
-├── backend-common/     # Shared backend utilities
-├── pages/              # Next.js page routes
-│   └── api/            # API route handlers (forwards to backend-api)
-├── public/             # Static assets
-├── src/
-│   ├── app/            # Application code (Next.js App Router)
-│   │   ├── assets/     # Frontend assets 
-│   │   ├── components/ # React components
-│   │   ├── views/      # Page view components
-│   │   └── utils/      # Utility functions
-│   ├── cloud/          # AWS Lambda functions
-│   └── nfc-bridge/     # NFC bridge server
-├── sql-migrations/     # Database migration scripts
-└── setup-nfc.js        # NFC setup script
-```
+This document provides guidelines and best practices for developers working on the UPassManager project.
 
 ## Development Environment Setup
 
 ### Prerequisites
 
-1. Node.js (v14 or higher)
-2. npm (v6 or higher)
-3. MySQL (v8 or higher)
-4. Git
+- Node.js (v18 or later)
+- npm (v9 or later)
+- Git
+- Code editor (VS Code recommended)
+- Docker (optional, for containerized development)
 
-### Setting Up Local Development
+### Setting Up Your Development Environment
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/vt-upass/upass-manager.git
-   cd upass-manager
+   git clone https://gitlab.com/your-group/upassmanager.git
+   cd upassmanager
    ```
 
 2. **Install Dependencies**
    ```bash
+   # Install frontend dependencies
+   cd upass-manager
+   npm install
+   
+   # Install backend API dependencies
+   cd backend-api
+   npm install
+   
+   # Install backend common dependencies
+   cd ../backend-common
    npm install
    ```
 
 3. **Set Up Environment Variables**
-   Create a `.env` file in the root directory with the following variables:
-   ```
-   # Database Configuration
-   DB_HOST=localhost
-   DB_USER=your_mysql_username
-   DB_PASSWORD=your_mysql_password
-   DB_DATABASE=upass_manager
-   DB_PORT=3306
-   
-   # AWS Configuration (if using notification features)
-   AWS_REGION=us-east-2
-   AWS_ACCESS_KEY_ID=your_access_key
-   AWS_SECRET_ACCESS_KEY=your_secret_key
-   LAMBDA_FUNCTION_NAME=CS5934_G6_SES
-   
-   # NFC Bridge Configuration
-   NEXT_PUBLIC_NFC_SERVER_URL=http://localhost:3001
-   ```
+   Create a `.env.local` file in the root directory with the necessary environment variables. See the [Installation Guide](Installation) for details.
 
-4. **Set Up the Database**
-   Create a MySQL database and run the migration scripts:
+4. **Run Development Server**
    ```bash
-   mysql -u your_mysql_username -p
-   ```
-   ```sql
-   CREATE DATABASE upass_manager;
-   ```
-   ```bash
-   mysql -u your_mysql_username -p upass_manager < sql-migrations/create_message_templates_table.sql
-   # Run additional migration scripts as needed
-   ```
-
-5. **Start the Development Server**
-   ```bash
+   # Start the frontend
+   cd upass-manager
+   npm run dev
+   
+   # In a separate terminal, start the backend API
+   cd upass-manager/backend-api
    npm run dev
    ```
-   This will start the Next.js development server at http://localhost:3000
 
-6. **Set Up NFC Integration (Optional)**
-   If you need to test the NFC integration:
-   ```bash
-   npm run setup-nfc
-   ```
-   Then in a separate terminal:
-   ```bash
-   cd src/nfc-bridge
-   npm start
-   ```
+## Project Structure
+
+```
+upass-manager/
+├── backend-api/           # Backend API code
+│   ├── pages/             # Next.js API routes
+│   │   └── api/           # API endpoints
+│   └── db.js              # Database connection
+├── backend-common/        # Shared backend code
+│   └── auth.js            # Authentication utilities
+├── pages/                 # Next.js pages
+│   └── api/               # API routes
+├── public/                # Static assets
+├── src/                   # Source code
+│   ├── app/               # Application code
+│   │   ├── assets/        # Assets (images, fonts, etc.)
+│   │   ├── components/    # React components
+│   │   ├── controllers/   # Business logic
+│   │   ├── models/        # Data models
+│   │   └── views/         # Page components
+│   └── cloud/             # Cloud infrastructure code
+│       └── lambda-code/   # AWS Lambda functions
+├── .gitignore             # Git ignore file
+├── eslint.config.mjs      # ESLint configuration
+├── next.config.ts         # Next.js configuration
+├── package.json           # npm package configuration
+├── postcss.config.mjs     # PostCSS configuration
+├── README.md              # Project README
+└── tsconfig.json          # TypeScript configuration
+```
 
 ## Coding Standards
 
-### JavaScript/TypeScript
+### General Guidelines
 
-- Use ES6+ features and modern JavaScript practices
-- Follow the Airbnb JavaScript Style Guide
-- Use meaningful variable and function names
-- Add JSDoc comments to functions and complex code blocks
-- Use async/await for asynchronous operations
+- Follow the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+- Use TypeScript for type safety
+- Write self-documenting code with clear variable and function names
+- Keep functions small and focused on a single responsibility
+- Add comments for complex logic, but prefer readable code over excessive comments
+- Use async/await for asynchronous code instead of callbacks or promise chains
 
-### React Components
+### TypeScript Guidelines
 
-- Create functional components with React Hooks
+- Use explicit typing for function parameters and return values
+- Avoid using `any` type when possible
+- Use interfaces for defining object shapes
+- Use enums for sets of related constants
+- Enable strict mode in TypeScript configuration
+
+### React Guidelines
+
+- Use functional components with hooks instead of class components
 - Keep components small and focused on a single responsibility
-- Use PropTypes for component props validation
-- Follow the presentational and container component pattern
-- Use descriptive component names that reflect their purpose
+- Use React context for state that needs to be accessed by many components
+- Follow the React component naming convention (PascalCase)
+- Use CSS modules or styled-components for component styling
+- Implement proper error boundaries
 
-### CSS/Styling
-
-- Use Tailwind CSS for styling components
-- Follow a consistent naming convention for custom CSS classes
-- Keep styling minimal and rely on Tailwind's utility classes
-- Use responsive design principles
-
-### API Endpoints
+### API Guidelines
 
 - Follow RESTful API design principles
 - Use consistent naming conventions for endpoints
-- Implement proper error handling and validation
-- Return appropriate HTTP status codes
-- Document all API endpoints thoroughly
+- Implement proper error handling and return appropriate HTTP status codes
+- Validate input data on the server side
+- Document all API endpoints using JSDoc comments
+- Implement rate limiting for public endpoints
 
-## Development Workflow
+## Git Workflow
 
 ### Branching Strategy
 
-We use a feature-branch workflow:
+We follow the GitFlow branching model:
 
-1. **Main Branch** (`main`): The production-ready branch
-2. **Development Branch** (`dev`): The primary development branch
-3. **Feature Branches** (`feature/feature-name`): For new features
-4. **Bugfix Branches** (`bugfix/issue-name`): For bug fixes
+- `main`: Production-ready code
+- `develop`: Integration branch for features
+- `feature/*`: New features
+- `bugfix/*`: Bug fixes
+- `hotfix/*`: Urgent fixes for production
+- `release/*`: Release preparation
 
-### Pull Request Process
+### Commit Messages
 
-1. Create a new branch from `dev` for your feature or fix
-2. Make your changes in small, focused commits
-3. Write tests for your changes if applicable
-4. Update documentation if necessary
-5. Submit a pull request to the `dev` branch
-6. Request a code review from a team member
-7. Address any feedback from the review
-8. Once approved, the PR can be merged
-
-### Commit Message Guidelines
-
-Follow the conventional commits specification:
+Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 ```
-<type>[optional scope]: <description>
+<type>(<scope>): <description>
 
 [optional body]
 
-[optional footer(s)]
+[optional footer]
 ```
 
-Types include:
+Types:
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation changes
 - `style`: Code style changes (formatting, etc.)
 - `refactor`: Code changes that neither fix bugs nor add features
-- `test`: Adding or correcting tests
+- `perf`: Performance improvements
+- `test`: Adding or fixing tests
 - `chore`: Changes to the build process or auxiliary tools
+
+Example:
+```
+feat(auth): implement JWT authentication
+
+- Add JWT token generation
+- Add token validation middleware
+- Update login endpoint to return tokens
+
+Closes #123
+```
+
+### Pull Requests
+
+- Create a pull request for each feature or bug fix
+- Provide a clear description of the changes
+- Reference related issues
+- Ensure all tests pass
+- Request code reviews from at least one team member
+- Squash commits before merging
 
 ## Testing
 
-### Unit Testing
+### Testing Framework
 
-- Write unit tests for utility functions and isolated components
-- Use Jest for testing JavaScript/TypeScript code
-- Aim for high test coverage of critical code paths
+We use Jest for unit and integration testing, and Cypress for end-to-end testing.
 
-### Component Testing
+### Test Types
 
-- Test React components using React Testing Library
-- Focus on testing user interactions and component behavior
-- Test both success and error states
+- **Unit Tests**: Test individual functions and components in isolation
+- **Integration Tests**: Test interactions between components
+- **End-to-End Tests**: Test the application as a whole from the user's perspective
 
-### API Testing
+### Test Coverage
 
-- Test API endpoints using Jest and Supertest
-- Verify correct responses for valid and invalid inputs
-- Test error handling and edge cases
+Aim for at least 80% test coverage for critical code paths.
 
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run unit and integration tests
 npm test
 
 # Run tests in watch mode
 npm test -- --watch
 
-# Generate coverage report
-npm test -- --coverage
+# Run end-to-end tests
+npm run test:e2e
 ```
 
-## Debugging
+## Continuous Integration
 
-### Frontend Debugging
+We use GitLab CI/CD for continuous integration and deployment.
 
-- Use React Developer Tools browser extension
-- Use console.log() strategically for debugging
-- Leverage Next.js error overlay for error information
-- Use the browser's DevTools for network and performance issues
+### CI Pipeline
 
-### Backend Debugging
+The CI pipeline includes the following stages:
 
-- Add detailed logging for API endpoints
-- Use error tracking for production issues
-- Test API endpoints with tools like Postman or Insomnia
+1. **Build**: Build the application
+2. **Test**: Run unit and integration tests
+3. **Lint**: Check code style
+4. **E2E**: Run end-to-end tests
+5. **Deploy**: Deploy to staging or production
 
-### NFC Bridge Debugging
+### CI Configuration
 
-- Run the check-reader.js script to verify NFC reader connection
-- Enable verbose logging in the NFC bridge server
-- Use WebSocket testing tools to verify communication
+The CI pipeline is configured in the `.gitlab-ci.yml` file in the root of the repository.
 
 ## Deployment
 
-### Development Deployment
+### Staging Environment
 
-- Automated deployments to development environment from the `dev` branch
-- Review apps for pull requests to test changes in isolation
+Changes to the `develop` branch are automatically deployed to the staging environment.
 
-### Production Deployment
+### Production Environment
 
-- Manual approval required for production deployments
-- Deploy from the `main` branch after thorough testing
-- Follow the deployment checklist in the operations manual
+Changes to the `main` branch are automatically deployed to the production environment after manual approval.
 
-## Performance Considerations
+### Deployment Process
 
-- Optimize database queries for large datasets
-- Implement pagination for list views
-- Use React.memo and useMemo for expensive computations
-- Optimize image and asset loading
-- Follow Next.js best practices for optimized page loading
+1. Merge changes to the appropriate branch
+2. CI pipeline builds and tests the application
+3. If all tests pass, the application is deployed
+4. Verify the deployment in the target environment
 
-## Security Best Practices
+## Security Guidelines
 
-- Validate and sanitize all user inputs
-- Use parameterized queries for database operations
-- Implement proper authentication and authorization
-- Keep dependencies updated to avoid security vulnerabilities
-- Follow the principle of least privilege for API access
+### Authentication and Authorization
+
+- Use JWT for authentication
+- Implement role-based access control
 - Store sensitive information in environment variables
+- Never commit secrets to the repository
 
-## Additional Resources
+### Data Protection
+
+- Encrypt sensitive data at rest and in transit
+- Implement proper input validation
+- Use parameterized queries to prevent SQL injection
+- Sanitize user input to prevent XSS attacks
+
+### Dependency Management
+
+- Regularly update dependencies to fix security vulnerabilities
+- Use npm audit to check for known vulnerabilities
+- Pin dependency versions to prevent unexpected changes
+
+## Performance Optimization
+
+### Frontend
+
+- Minimize bundle size using code splitting
+- Optimize images and other assets
+- Implement lazy loading for components and routes
+- Use memoization for expensive computations
+- Implement proper caching strategies
+
+### Backend
+
+- Optimize database queries
+- Implement caching for frequently accessed data
+- Use pagination for large data sets
+- Implement proper indexing for database tables
+- Use connection pooling for database connections
+
+## Documentation
+
+### Code Documentation
+
+- Use JSDoc comments for functions and classes
+- Document complex algorithms and business logic
+- Keep documentation up to date with code changes
+
+### API Documentation
+
+- Document all API endpoints with examples
+- Include request and response schemas
+- Document error responses and status codes
+
+### Wiki Documentation
+
+- Keep the wiki up to date with the latest information
+- Document architecture decisions
+- Provide guides for common tasks
+
+## Troubleshooting
+
+### Common Issues
+
+- **Database Connection Issues**: Check database credentials and connection string
+- **API Errors**: Check API logs for detailed error messages
+- **Frontend Build Failures**: Ensure all dependencies are installed correctly
+
+### Debugging
+
+- Use the browser developer tools for frontend debugging
+- Use logging for backend debugging
+- Use the debugger in your IDE for step-by-step debugging
+
+## Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [React Documentation](https://reactjs.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Socket.IO Documentation](https://socket.io/docs)
-- [MySQL Documentation](https://dev.mysql.com/doc/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs)
+- [AWS Documentation](https://docs.aws.amazon.com)
+- [GitLab CI/CD Documentation](https://docs.gitlab.com/ee/ci/)

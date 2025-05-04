@@ -1,499 +1,576 @@
 # API Documentation
 
-## Overview
-The UPass Manager API provides programmatic access to U-Pass data, student records, and system functions. This documentation describes available endpoints, request/response formats, and authentication requirements.
+This document provides comprehensive documentation for the UPassManager API endpoints.
+
+## API Overview
+
+The UPassManager API is a RESTful API that provides programmatic access to the UPassManager system. It allows you to:
+
+- Authenticate users
+- Manage student data
+- Check eligibility
+- Manage U-Pass cards
+- Generate reports
+- Send notifications
 
 ## Base URL
-All API endpoints are relative to:
-```
-https://your-domain.com/api
-```
 
-For local development:
 ```
-http://localhost:3000/api
+https://api.upassmanager.example.com/v1
 ```
 
 ## Authentication
-Most API endpoints require authentication. Include the user role in the `Authorization` header of your requests.
+
+All API requests require authentication using JSON Web Tokens (JWT).
+
+### Obtaining a Token
 
 ```
-Authorization: admin
+POST /auth/login
 ```
 
-or
-
-```
-Authorization: distributor
-```
-
-## API Endpoints
-
-### Student Data
-
-#### Search Student by PID
-
-```
-GET /search-by-pid?pid={pid}
-```
-
-Retrieves student information by their PID (9-digit Virginia Tech ID number).
-
-**Parameters:**
-- `pid` (required): 9-digit PID number
-
-**Response:**
+**Request Body:**
 ```json
 {
-  "data": {
-    "Student_ID": "123456789",
-    "First_Name": "John",
-    "Last_Name": "Doe",
-    "Email": "johndoe@vt.edu",
-    "Active_U_Pass_Card": "12345678901234567890",
-    "Replaced_U_Pass_Card": null,
-    "Disclaimer_Signed": 1,
-    "Metro_Acct": null,
-    "Distribution_Date": "2025-03-15",
-    "Picked_Up_By": "John Doe",
-    "Notes": "Student requested card on 3/10",
-    "U_Pass_ID": null
-  }
+  "email": "user@example.com",
+  "password": "your_password"
 }
 ```
 
-**Error Responses:**
-- `400 Bad Request`: Invalid PID format
-- `404 Not Found`: No student found with the provided PID
-- `500 Internal Server Error`: Server error
-
----
-
-#### Get All Records
-
-```
-GET /get-all-records
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresIn": 3600
+}
 ```
 
-Retrieves a paginated list of student records with optional filtering.
+### Using the Token
 
-**Parameters:**
-- `page` (optional): Page number for pagination (default: 1)
-- `limit` (optional): Number of records per page (default: 10)
-- `table` (optional): Database table to query (default: 'u_pass_manager_current')
-- Filter parameters (optional): Any column name can be used as a filter
+Include the token in the Authorization header of all API requests:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Refreshing a Token
+
+```
+POST /auth/refresh
+```
+
+**Request Body:**
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
 
 **Response:**
 ```json
 {
-  "records": [
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresIn": 3600
+}
+```
+
+## User Endpoints
+
+### Get Current User
+
+```
+GET /users/me
+```
+
+**Response:**
+```json
+{
+  "id": "123456",
+  "email": "user@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "distributor",
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-01-01T00:00:00Z"
+}
+```
+
+### Update User
+
+```
+PUT /users/me
+```
+
+**Request Body:**
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "user@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "id": "123456",
+  "email": "user@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "distributor",
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-03-01T00:00:00Z"
+}
+```
+
+### Change Password
+
+```
+POST /users/me/change-password
+```
+
+**Request Body:**
+```json
+{
+  "currentPassword": "old_password",
+  "newPassword": "new_password"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Password changed successfully"
+}
+```
+
+## Student Endpoints
+
+### Get Students
+
+```
+GET /students
+```
+
+**Query Parameters:**
+- `page`: Page number (default: 1)
+- `limit`: Number of results per page (default: 20)
+- `search`: Search term for name or ID
+- `eligibility`: Filter by eligibility status
+
+**Response:**
+```json
+{
+  "data": [
     {
-      "Student_ID": "123456789",
-      "First_Name": "John",
-      "Last_Name": "Doe",
-      "Email": "johndoe@vt.edu",
-      "Active_U_Pass_Card": "12345678901234567890",
-      "Replaced_U_Pass_Card": null,
-      "Disclaimer_Signed": 1,
-      "Metro_Acct": null,
-      "Distribution_Date": "2025-03-15",
-      "Picked_Up_By": "John Doe",
-      "Notes": "Student requested card on 3/10",
-      "U_Pass_ID": null
+      "id": "123456",
+      "studentId": "S12345",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "eligibilityStatus": "eligible",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
     },
-    // Additional records...
+    // More students...
   ],
   "pagination": {
-    "totalRecords": 156,
-    "totalPages": 16,
-    "currentPage": 1,
-    "limit": 10
+    "total": 100,
+    "page": 1,
+    "limit": 20,
+    "pages": 5
   }
 }
 ```
 
-**Error Responses:**
-- `400 Bad Request`: Invalid parameters
-- `500 Internal Server Error`: Server error
-
----
-
-### U-Pass Management
-
-#### Allocate U-Pass
+### Get Student by ID
 
 ```
-POST /allocate-upass
-```
-
-Allocates a U-Pass card to a student.
-
-**Request Body:**
-```json
-{
-  "pid": "123456789",
-  "upassId": "12345678901234567890"
-}
+GET /students/{id}
 ```
 
 **Response:**
 ```json
 {
-  "message": "U-Pass allocated successfully",
-  "success": true,
-  "isReplacement": false
-}
-```
-
-**Error Responses:**
-- `400 Bad Request`: Invalid parameters or disclaimer not signed
-- `404 Not Found`: Student not found
-- `500 Internal Server Error`: Server error
-
----
-
-#### Update Disclaimer
-
-```
-POST /update-disclaimer
-```
-
-Updates the disclaimer signed status for a student.
-
-**Request Body:**
-```json
-{
-  "pid": "123456789"
-}
-```
-
-**Response:**
-```json
-{
-  "message": "Disclaimer signed status updated successfully",
-  "success": true
-}
-```
-
-**Error Responses:**
-- `400 Bad Request`: Invalid PID
-- `404 Not Found`: Student not found
-- `500 Internal Server Error`: Server error
-
----
-
-#### Update Student Record
-
-```
-POST /update-student
-```
-
-Updates student information in the database.
-
-**Request Body:**
-```json
-{
-  "Student_ID": "123456789",
-  "Active_U_Pass_Card": "12345678901234567890",
-  "Replaced_U_Pass_Card": "09876543210987654321",
-  "Disclaimer_Signed": 1,
-  "Metro_Acct": "M12345",
-  "Distribution_Date": "2025-03-15",
-  "Picked_Up_By": "John Doe",
-  "Notes": "Card replaced due to damage",
-  "U_Pass_ID": "UP12345"
-}
-```
-
-**Response:**
-```json
-{
-  "message": "Student record updated successfully",
-  "success": true
-}
-```
-
-**Error Responses:**
-- `400 Bad Request`: Invalid parameters
-- `404 Not Found`: Student not found
-- `500 Internal Server Error`: Server error
-
----
-
-### Notification System
-
-#### Get Message Templates
-
-```
-GET /message-templates
-```
-
-Retrieves available notification message templates.
-
-**Response:**
-```json
-{
-  "templates": [
-    {
-      "id": 1,
-      "name": "U-Pass Ready for Pickup",
-      "subject": "Your U-Pass is Ready for Pickup",
-      "body": "Dear {{FIRST_NAME}},\n\nYour U-Pass is now ready for pickup...",
-      "created_at": "2025-01-15T12:00:00Z",
-      "updated_at": "2025-01-15T12:00:00Z"
-    },
-    // Additional templates...
-  ]
-}
-```
-
-**Error Responses:**
-- `500 Internal Server Error`: Server error
-
----
-
-#### Send Notification
-
-```
-POST /send-notification
-```
-
-Sends notifications to selected students.
-
-**Request Body:**
-```json
-{
-  "templateId": 1,
-  "customSubject": "Your U-Pass is Ready",
-  "customBody": "Dear {{FIRST_NAME}},\n\nYour U-Pass is now ready...",
-  "recipients": ["student1@vt.edu", "student2@vt.edu"]
-}
-```
-
-**Response:**
-```json
-{
-  "message": "Notifications sent successfully",
-  "success": true,
-  "sentCount": 2
-}
-```
-
-**Error Responses:**
-- `400 Bad Request`: Invalid parameters
-- `500 Internal Server Error`: Server error
-
----
-
-### User Management
-
-#### Login
-
-```
-POST /login
-```
-
-Authenticates a user and returns their role.
-
-**Request Body:**
-```json
-{
-  "email": "distributor@vt.edu",
-  "password": "securePassword123"
-}
-```
-
-**Response:**
-```json
-{
-  "message": "Login successful",
-  "role": "distributor"
-}
-```
-
-**Error Responses:**
-- `400 Bad Request`: Missing email or password
-- `401 Unauthorized`: Invalid credentials
-- `500 Internal Server Error`: Server error
-
----
-
-#### Add Distributor
-
-```
-POST /add-distributor
-```
-
-Adds a new distributor user (admin only).
-
-**Request Body:**
-```json
-{
-  "email": "newdistributor@vt.edu",
+  "id": "123456",
+  "studentId": "S12345",
   "firstName": "Jane",
   "lastName": "Smith",
-  "password": "securePassword123"
+  "email": "jane.smith@example.com",
+  "eligibilityStatus": "eligible",
+  "upass": {
+    "id": "789012",
+    "passNumber": "UP123456",
+    "issueDate": "2025-01-15T00:00:00Z",
+    "expiryDate": "2025-05-15T00:00:00Z",
+    "status": "active"
+  },
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-01-01T00:00:00Z"
+}
+```
+
+### Update Student
+
+```
+PUT /students/{id}
+```
+
+**Request Body:**
+```json
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@example.com",
+  "eligibilityStatus": "eligible"
 }
 ```
 
 **Response:**
 ```json
 {
-  "message": "Distributor added successfully",
-  "success": true
+  "id": "123456",
+  "studentId": "S12345",
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@example.com",
+  "eligibilityStatus": "eligible",
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-03-01T00:00:00Z"
 }
 ```
 
-**Error Responses:**
-- `400 Bad Request`: Invalid parameters
-- `401 Unauthorized`: Not authorized as admin
-- `409 Conflict`: User already exists
-- `500 Internal Server Error`: Server error
-
----
-
-#### Get Distributors
+### Import Students
 
 ```
-GET /get-distributors
+POST /students/import
 ```
 
-Retrieves a list of distributors (admin only).
-
-**Response:**
+**Request Body:**
 ```json
 {
-  "distributors": [
+  "students": [
     {
-      "id": 1,
-      "email": "distributor1@vt.edu",
-      "first_name": "John",
-      "last_name": "Doe",
-      "created_at": "2025-01-15T12:00:00Z"
+      "studentId": "S12345",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane.smith@example.com",
+      "eligibilityStatus": "eligible"
     },
-    // Additional distributors...
+    // More students...
   ]
 }
 ```
 
-**Error Responses:**
-- `401 Unauthorized`: Not authorized as admin
-- `500 Internal Server Error`: Server error
-
----
-
-#### Remove Distributor
-
-```
-POST /remove-distributor
+**Response:**
+```json
+{
+  "imported": 10,
+  "failed": 0,
+  "errors": []
+}
 ```
 
-Removes a distributor from the system (admin only).
+## U-Pass Endpoints
+
+### Issue U-Pass
+
+```
+POST /upasses/issue
+```
 
 **Request Body:**
 ```json
 {
-  "email": "distributor@vt.edu"
+  "studentId": "123456",
+  "passNumber": "UP123456"
 }
 ```
 
 **Response:**
 ```json
 {
-  "message": "Distributor removed successfully",
-  "success": true
+  "id": "789012",
+  "studentId": "123456",
+  "passNumber": "UP123456",
+  "issueDate": "2025-03-01T00:00:00Z",
+  "expiryDate": "2025-07-01T00:00:00Z",
+  "status": "active",
+  "distributorId": "456789",
+  "createdAt": "2025-03-01T00:00:00Z",
+  "updatedAt": "2025-03-01T00:00:00Z"
 }
 ```
 
-**Error Responses:**
-- `400 Bad Request`: Invalid email
-- `401 Unauthorized`: Not authorized as admin
-- `404 Not Found`: Distributor not found
-- `500 Internal Server Error`: Server error
-
----
-
-### Data Import
-
-#### Upload Students Data
+### Get U-Pass by ID
 
 ```
-POST /upload
+GET /upasses/{id}
 ```
-
-Uploads student data from a CSV or Excel file.
-
-**Request Body:**
-Form data with a file named "file"
 
 **Response:**
 ```json
 {
-  "message": "File uploaded and processed successfully",
-  "recordsProcessed": 150,
-  "recordsAdded": 25,
-  "recordsUpdated": 125
+  "id": "789012",
+  "studentId": "123456",
+  "passNumber": "UP123456",
+  "issueDate": "2025-03-01T00:00:00Z",
+  "expiryDate": "2025-07-01T00:00:00Z",
+  "status": "active",
+  "distributorId": "456789",
+  "student": {
+    "id": "123456",
+    "studentId": "S12345",
+    "firstName": "Jane",
+    "lastName": "Smith"
+  },
+  "createdAt": "2025-03-01T00:00:00Z",
+  "updatedAt": "2025-03-01T00:00:00Z"
 }
 ```
 
-**Error Responses:**
-- `400 Bad Request`: Invalid file format or missing file
-- `401 Unauthorized`: Not authorized as admin
-- `500 Internal Server Error`: Server error
+### Update U-Pass Status
+
+```
+PUT /upasses/{id}/status
+```
+
+**Request Body:**
+```json
+{
+  "status": "lost",
+  "reason": "Student reported card lost"
+}
+```
+
+**Response:**
+```json
+{
+  "id": "789012",
+  "studentId": "123456",
+  "passNumber": "UP123456",
+  "issueDate": "2025-03-01T00:00:00Z",
+  "expiryDate": "2025-07-01T00:00:00Z",
+  "status": "lost",
+  "distributorId": "456789",
+  "createdAt": "2025-03-01T00:00:00Z",
+  "updatedAt": "2025-03-15T00:00:00Z"
+}
+```
+
+## Notification Endpoints
+
+### Send Notification
+
+```
+POST /notifications
+```
+
+**Request Body:**
+```json
+{
+  "studentId": "123456",
+  "type": "pickup",
+  "message": "Your U-Pass is ready for pickup"
+}
+```
+
+**Response:**
+```json
+{
+  "id": "345678",
+  "studentId": "123456",
+  "type": "pickup",
+  "message": "Your U-Pass is ready for pickup",
+  "read": false,
+  "createdAt": "2025-03-01T00:00:00Z"
+}
+```
+
+### Get Notifications
+
+```
+GET /notifications
+```
+
+**Query Parameters:**
+- `page`: Page number (default: 1)
+- `limit`: Number of results per page (default: 20)
+- `studentId`: Filter by student ID
+- `type`: Filter by notification type
+- `read`: Filter by read status
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "345678",
+      "studentId": "123456",
+      "type": "pickup",
+      "message": "Your U-Pass is ready for pickup",
+      "read": false,
+      "createdAt": "2025-03-01T00:00:00Z"
+    },
+    // More notifications...
+  ],
+  "pagination": {
+    "total": 50,
+    "page": 1,
+    "limit": 20,
+    "pages": 3
+  }
+}
+```
+
+### Mark Notification as Read
+
+```
+PUT /notifications/{id}/read
+```
+
+**Response:**
+```json
+{
+  "id": "345678",
+  "studentId": "123456",
+  "type": "pickup",
+  "message": "Your U-Pass is ready for pickup",
+  "read": true,
+  "createdAt": "2025-03-01T00:00:00Z",
+  "updatedAt": "2025-03-02T00:00:00Z"
+}
+```
+
+## Report Endpoints
+
+### Generate Report
+
+```
+POST /reports/generate
+```
+
+**Request Body:**
+```json
+{
+  "type": "distribution",
+  "startDate": "2025-01-01T00:00:00Z",
+  "endDate": "2025-03-31T23:59:59Z",
+  "format": "csv"
+}
+```
+
+**Response:**
+```json
+{
+  "id": "567890",
+  "type": "distribution",
+  "startDate": "2025-01-01T00:00:00Z",
+  "endDate": "2025-03-31T23:59:59Z",
+  "format": "csv",
+  "status": "processing",
+  "createdAt": "2025-04-01T00:00:00Z"
+}
+```
+
+### Get Report Status
+
+```
+GET /reports/{id}
+```
+
+**Response:**
+```json
+{
+  "id": "567890",
+  "type": "distribution",
+  "startDate": "2025-01-01T00:00:00Z",
+  "endDate": "2025-03-31T23:59:59Z",
+  "format": "csv",
+  "status": "completed",
+  "url": "https://api.upassmanager.example.com/v1/reports/567890/download",
+  "createdAt": "2025-04-01T00:00:00Z",
+  "completedAt": "2025-04-01T00:05:00Z"
+}
+```
+
+### Download Report
+
+```
+GET /reports/{id}/download
+```
+
+**Response:**
+Binary file download
 
 ## Error Handling
 
-All API endpoints return errors in a consistent format:
+The API uses standard HTTP status codes to indicate the success or failure of a request.
+
+### Error Response Format
 
 ```json
 {
-  "message": "Detailed error message",
-  "error": "Optional error type or code"
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Invalid email or password",
+    "details": {}
+  }
 }
 ```
 
+### Common Error Codes
+
+- `UNAUTHORIZED`: Authentication is required
+- `FORBIDDEN`: Insufficient permissions
+- `NOT_FOUND`: Resource not found
+- `VALIDATION_ERROR`: Invalid request data
+- `INTERNAL_ERROR`: Server error
+
 ## Rate Limiting
 
-API requests are limited to 100 requests per minute per IP address. When exceeding this limit, requests will return a 429 Too Many Requests status with a message indicating when to retry.
+The API implements rate limiting to prevent abuse. The current limits are:
+
+- 100 requests per minute for authenticated users
+- 10 requests per minute for unauthenticated users
+
+Rate limit information is included in the response headers:
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1614556800
+```
 
 ## Versioning
 
-The current API is v1. Future API versions will be available at `/api/v2`, etc., when released.
+The API is versioned using URL path versioning. The current version is `v1`.
 
-## Examples
+## Pagination
 
-### Example: Searching for a Student
-```javascript
-const searchStudent = async (pid) => {
-  const response = await fetch(`/api/search-by-pid?pid=${pid}`, {
-    headers: {
-      'Authorization': localStorage.getItem('userRole')
-    }
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch student data');
+List endpoints support pagination using the `page` and `limit` query parameters. The response includes pagination metadata:
+
+```json
+{
+  "data": [...],
+  "pagination": {
+    "total": 100,
+    "page": 1,
+    "limit": 20,
+    "pages": 5
   }
-  
-  return response.json();
-};
+}
 ```
 
-### Example: Allocating a U-Pass
-```javascript
-const allocateUPass = async (pid, upassId) => {
-  const response = await fetch('/api/allocate-upass', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': localStorage.getItem('userRole')
-    },
-    body: JSON.stringify({ pid, upassId })
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to allocate U-Pass');
-  }
-  
-  return response.json();
-};
+## Filtering and Sorting
+
+Many list endpoints support filtering and sorting using query parameters:
+
+- `search`: Search term for text fields
+- `sort`: Field to sort by (prefix with `-` for descending order)
+- Additional endpoint-specific filters
+
+## CORS
+
+The API supports Cross-Origin Resource Sharing (CORS) for browser-based clients.

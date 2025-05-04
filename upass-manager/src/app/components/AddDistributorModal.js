@@ -1,41 +1,13 @@
-/**
- * @file AddDistributorModal.js
- * @description Modal component for adding new UPass distributors to the system
- * @module components/AddDistributorModal
- */
-
 "use client";
 
 import React, { useState } from 'react';
 
-/**
- * Modal component for adding new UPass distributors
- * Allows administrators to add new distributors by email address.
- * The component handles form submission, validation, and sends
- * an invitation email to the new distributor with login instructions.
- *
- * @component
- * @param {Object} props - Component props
- * @param {boolean} props.isOpen - Whether the modal is visible
- * @param {Function} props.onClose - Handler function to close the modal
- * @param {Function} props.onConfirm - Callback function executed after successful distributor addition
- * @returns {JSX.Element|null} The modal UI or null if not open
- */
 const AddDistributorModal = ({ isOpen, onClose, onConfirm }) => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  /**
-   * Handles the form submission to add a new distributor
-   * Validates the email, sends notification to the new distributor,
-   * and shows success or error message
-   *
-   * @async
-   * @function handleSubmit
-   * @param {Event} e - Form submit event
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     

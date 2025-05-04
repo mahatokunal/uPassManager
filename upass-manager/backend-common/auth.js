@@ -1,10 +1,4 @@
-/**
- * @file Authentication utilities for UPass Manager
- * @description Provides authentication functions for verifying user tokens,
- *              authenticating users, and managing session cookies
- * @module backend-common/auth
- */
-
+// common/auth.js
 import pool from '../backend-api/db.js';  // Import your DB connection from backend-api
 import jwt from 'jsonwebtoken';
 
@@ -43,12 +37,7 @@ export async function verifyToken(req) {
   }
 }
 
-/**
- * Helper function to parse cookies from a cookie string
- * @private
- * @param {string} cookieString - The cookie header string from the request
- * @returns {Object} - An object containing all cookies as key-value pairs
- */
+// Helper function to parse cookies
 function parseCookies(cookieString) {
   const cookies = {};
   if (!cookieString) return cookies;

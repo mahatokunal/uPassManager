@@ -1,44 +1,6 @@
-/**
- * @file API endpoint for updating student UPass information
- * @description Handles updates to student records in the UPass management system
- * @module backend-api/pages/api/update-student
- */
+// backend-api/pages/api/update-student.js
 import pool from '../../db';
 
-/**
- * Updates a student record in the database based on provided fields
- * 
- * @async
- * @function handler
- * @param {Object} req - The HTTP request object
- * @param {Object} req.body - The request body containing fields to update
- * @param {string} req.body.Student_ID - The 9-digit student ID (required)
- * @param {string} [req.body.Active_U_Pass_Card] - Current active UPass card number
- * @param {string} [req.body.Replaced_U_Pass_Card] - Previous replaced UPass card number
- * @param {boolean} [req.body.Disclaimer_Signed] - Whether student has signed disclaimer
- * @param {string} [req.body.Metro_Acct] - Metro account information
- * @param {string} [req.body.Distribution_Date] - Date when UPass was distributed
- * @param {string} [req.body.Picked_Up_By] - Person who picked up the UPass
- * @param {string} [req.body.Notes] - Additional notes about the student
- * @param {string} [req.body.U_Pass_ID] - UPass ID number
- * @param {Object} res - The HTTP response object
- * @returns {Object} JSON response indicating success or failure
- * 
- * @example
- * // Request body
- * {
- *   "Student_ID": "123456789",
- *   "Active_U_Pass_Card": "A12345678",
- *   "Disclaimer_Signed": true,
- *   "Distribution_Date": "2025-05-01"
- * }
- * 
- * // Success response (200 OK)
- * {
- *   "message": "Student record updated successfully",
- *   "success": true
- * }
- */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
