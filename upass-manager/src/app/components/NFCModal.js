@@ -1,9 +1,39 @@
+/**
+ * @file NFCModal component for scanning UPass cards via NFC
+ * @description Provides an interface for scanning UPass cards using NFC readers,
+ *              allowing allocation or replacement of UPass cards to students
+ * @module app/components/NFCModal
+ */
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { maskPid } from '../utils/maskPid';
 import { io } from 'socket.io-client';
 
+/**
+ * Modal component for UPass card allocation or replacement through NFC scanning
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Function to call when the modal is closed
+ * @param {Function} props.onConfirm - Function to call when a UPass is confirmed
+ * @param {Object} props.studentInfo - Information about the student
+ * @param {string} props.studentInfo.First_Name - Student's first name
+ * @param {string} props.studentInfo.Last_Name - Student's last name
+ * @param {string} props.studentInfo.Student_ID - Student's ID (PID)
+ * @param {string} props.studentInfo.Email - Student's email address
+ * @param {string} [props.studentInfo.Active_U_Pass_Card] - Student's current UPass card number (if any)
+ * @returns {React.ReactElement|null} The NFCModal component or null if not open
+ * 
+ * @example
+ * <NFCModal
+ *   isOpen={showNfcModal}
+ *   onClose={() => setShowNfcModal(false)}
+ *   onConfirm={handleUPassAllocation}
+ *   studentInfo={selectedStudent}
+ * />
+ */
 const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   const [upassId, setUpassId] = useState('');
   const [error, setError] = useState(null);

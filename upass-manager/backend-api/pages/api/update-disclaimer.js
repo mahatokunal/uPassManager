@@ -1,6 +1,22 @@
+/**
+ * @file update-disclaimer.js
+ * @description API endpoint to update the disclaimer status for a student
+ * @module backend-api/update-disclaimer
+ */
+
 // backend-api/pages/api/update-disclaimer.js
 import pool from '../../db';
 
+/**
+ * @async
+ * @function handler
+ * @description Handles requests to update a student's disclaimer status
+ * @param {object} req - The HTTP request object
+ * @param {object} req.body - The request body
+ * @param {string} req.body.pid - The 9-digit student PID
+ * @param {object} res - The HTTP response object
+ * @returns {object} JSON response indicating success or failure
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });

@@ -17,22 +17,50 @@ The UPassManager system follows a modern cloud-based architecture with the follo
 ## Technology Stack
 
 ### Frontend
-- **Framework**: Next.js 15.2.1
+- **Framework**: Next.js 15.3.1
 - **UI Library**: React 19.0.0
-- **Styling**: TailwindCSS 4
+- **Styling**: TailwindCSS 4.0.12
 - **Language**: TypeScript 5
 
 ### Backend
 - **API Framework**: Next.js API Routes
-- **Authentication**: JWT-based authentication
-- **Database**: (MongoDB/PostgreSQL/etc.)
-- **Cloud Functions**: AWS Lambda
+- **Authentication**: JWT-based authentication (jsonwebtoken 9.0.2)
+- **Database**: MySQL (mysql2 3.14.0)
+- **Cloud Functions**: AWS Lambda (@aws-sdk/client-lambda 3.540.0)
+- **Email Service**: AWS SES (@aws-sdk/client-ses 3.782.0)
 
 ### Infrastructure
-- **Cloud Provider**: AWS (or Azure/other)
-- **CI/CD**: GitLab CI/CD
-- **Containerization**: Docker
-- **Monitoring**: CloudWatch
+- **Cloud Provider**: AWS
+- **Storage**: AWS S3 (implied by AWS SDK usage)
+- **Environment Variables**: dotenv 16.4.5
+
+## Project Structure
+
+The UPassManager codebase is organized into several directories:
+
+### `/upass-manager`
+Main project directory containing the Next.js application.
+
+### `/upass-manager/backend-api`
+Contains backend API implementation for the application endpoints.
+
+### `/upass-manager/backend-common`
+Shared utilities and modules used across the backend.
+
+### `/upass-manager/pages/api`
+API route handlers that expose the backend functionality.
+
+### `/upass-manager/src/app`
+Frontend application code including components, controllers, models, and pages.
+
+### `/upass-manager/src/cloud`
+AWS Lambda functions code for serverless operations.
+
+### `/upass-manager/sql-migrations`
+SQL scripts for database schema migrations.
+
+### `/wiki`
+Project documentation including architecture, API reference, and user guides.
 
 ## Component Diagram
 
@@ -160,3 +188,50 @@ The UPassManager system follows a modern cloud-based architecture with the follo
 - Automated alerts for system issues
 - Performance metrics collection
 - Error tracking and reporting
+
+## API Endpoints
+
+The UPassManager system exposes the following key API endpoints:
+
+### Authentication
+- `/api/login` - Authenticates users and issues JWT tokens
+
+### U-Pass Management
+- `/api/search-by-pid` - Searches for student records by PID
+- `/api/allocate-upass` - Allocates U-Pass to eligible students
+- `/api/get-all-records` - Retrieves all U-Pass records
+
+### Distributor Management
+- `/api/get-distributors` - Gets list of all distributors
+- `/api/remove-distributor` - Removes a distributor
+
+### Notifications
+- `/api/send-notification` - Sends notifications to students
+- `/api/message-templates` - Manages notification message templates
+
+### System Management
+- `/api/update-disclaimer` - Updates system disclaimer text
+- `/api/upload` - Uploads data to the system
+
+## File Upload and Processing
+
+1. Users upload files through the UploadModal component
+2. Files are processed by the `/api/upload` endpoint
+3. Data is validated and stored in the database
+4. AWS Lambda functions may be triggered for additional processing
+
+## Authentication Flow
+
+1. Users enter credentials on the Login page
+2. Credentials are validated by the `/api/login` endpoint
+3. JWT token is issued and stored in localStorage
+4. Token is included in subsequent API requests
+5. User role determines available functionality
+
+## NFC Integration
+
+The system includes NFC functionality for physical U-Pass allocation:
+1. Distributor initiates allocation via the NFCModal component
+2. System verifies student eligibility
+3. NFC reader associates physical card with student record
+4. Database is updated with the allocation information

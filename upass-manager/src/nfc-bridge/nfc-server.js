@@ -1,3 +1,9 @@
+/**
+ * @file NFC Bridge Server
+ * @description WebSocket server that bridges communication between NFC card readers and the web application
+ * @module nfc-bridge/nfc-server
+ */
+
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -20,7 +26,10 @@ const io = socketIo(server, {
   }
 });
 
-// Initialize PC/SC
+/**
+ * Initialize PC/SC (PC/Smart Card) library for interfacing with NFC readers
+ * @type {Object|null} The PC/SC instance or null if initialization failed
+ */
 let pcscInstance;
 try {
   pcscInstance = pcsc();
@@ -31,20 +40,37 @@ try {
   process.exit(1);
 }
 
-// Store active readers
+/**
+ * Store active NFC readers
+ * @type {Object.<string, Object>} Map of reader names to reader objects
+ */
 const readers = {};
 
-// Track connection status
+/**
+ * Track if any clients are currently connected
+ * @type {boolean}
+ */
 let isConnected = false;
 
-// Function to convert byte array to hex string
+/**
+ * Converts byte array to hexadecimal string
+ * 
+ * @param {Buffer|Uint8Array} bytes - Array of bytes to convert
+ * @returns {string} Hexadecimal string representation
+ */
 function bytesToHexString(bytes) {
   return Array.from(bytes)
     .map(byte => (byte < 0x10 ? '0' : '') + byte.toString(16).toUpperCase())
     .join('');
 }
 
-// Function to calculate checksum (same as in the VBA code)
+/**
+ * Calculate the checksum for UPass card numbers
+ * Uses the same algorithm as in the VBA code
+ * 
+ * @param {string} value - Card number string to calculate checksum for
+ * @returns {number} The calculated checksum digit
+ */
 function getChecksum(value) {
   const delta = [0, 1, 2, 3, 4, -4, -3, -2, -1, 0];
   let sum = 0;
@@ -68,61 +94,45 @@ function getChecksum(value) {
   return sum === 10 ? 0 : sum;
 }
 
-// Function to format card number (same as in the VBA code)
+/**
+ * Format raw card data into a valid UPass card number
+ * Uses the same algorithm as in the VBA code
+ * 
+ * @param {Buffer} data - Raw card data from the NFC reader
+ * @returns {string} Formatted 20-digit UPass card number or empty string if invalid
+ */
 function formatCardNumber(data) {
-  try {
-    // Check if data is valid
-    if (!data || !data.length || data.length < 3) {
-      console.error('Invalid data received:', data);
-      return '';
-    }
-    
-    // Convert bytes to hex string (skip first byte and last two bytes)
-    // Make sure we don't go out of bounds
-    const startIndex = Math.min(1, data.length - 1);
-    const endIndex = Math.max(startIndex, data.length - 2);
-    const hexStr = bytesToHexString(data.slice(startIndex, endIndex));
-    
-    // Check if hexStr is valid
-    if (!hexStr || hexStr.length === 0) {
-      console.error('Invalid hex string:', hexStr);
-      return '';
-    }
-    
-    // Convert hex to decimal
-    let longVal = 0n;
-    for (let i = 0; i < hexStr.length; i++) {
-      const hexDigit = hexStr.charAt(hexStr.length - 1 - i);
-      // Make sure hexDigit is a valid hex character
-      if (!/^[0-9A-F]$/i.test(hexDigit)) {
-        console.error('Invalid hex digit:', hexDigit);
-        continue;
-      }
-      const decValue = BigInt(parseInt(hexDigit, 16));
-      longVal += decValue * (16n ** BigInt(i));
-    }
-    
-    // Convert to string and pad with leading zeros
-    let longStr = longVal.toString();
-    while (longStr.length < 15) {
-      longStr = '0' + longStr;
-    }
-    
-    // Return empty string if all zeros
-    if (longStr === '000000000000000') {
-      return '';
-    }
-    
-    // Add prefix and checksum
-    longStr = '0167' + longStr;
-    return longStr + getChecksum(longStr);
-  } catch (error) {
-    console.error('Error formatting card number:', error);
+  // Convert bytes to hex string (skip first byte and last two bytes)
+  const hexStr = bytesToHexString(data.slice(1, data.length - 2));
+  
+  // Convert hex to decimal
+  let longVal = 0n;
+  for (let i = 0; i < hexStr.length; i++) {
+    const hexDigit = hexStr.charAt(hexStr.length - 1 - i);
+    const decValue = BigInt(parseInt(hexDigit, 16));
+    longVal += decValue * (16n ** BigInt(i));
+  }
+  
+  // Convert to string and pad with leading zeros
+  let longStr = longVal.toString();
+  while (longStr.length < 15) {
+    longStr = '0' + longStr;
+  }
+  
+  // Return empty string if all zeros
+  if (longStr === '000000000000000') {
     return '';
   }
+  
+  // Add prefix and checksum
+  longStr = '0167' + longStr;
+  return longStr + getChecksum(longStr);
 }
 
-// Handle PC/SC reader events
+/**
+ * Handle PC/SC reader events for new readers detected
+ * Sets up event handlers for card insertion, removal, and errors
+ */
 pcscInstance.on('reader', function(reader) {
   console.log('New reader detected:', reader.name);
   
@@ -138,6 +148,9 @@ pcscInstance.on('reader', function(reader) {
   // Notify all clients about the new reader
   io.emit('readerConnected', { name: reader.name });
   
+  /**
+   * Handle reader status changes (card insertion/removal)
+   */
   reader.on('status', function(status) {
     const changes = this.state ^ status.state;
     
@@ -191,24 +204,36 @@ pcscInstance.on('reader', function(reader) {
     this.state = status.state;
   });
   
+  /**
+   * Handle reader disconnection
+   */
   reader.on('end', function() {
     console.log('Reader removed:', this.name);
     delete readers[this.name];
     io.emit('readerDisconnected', { name: this.name });
   });
   
+  /**
+   * Handle reader errors
+   */
   reader.on('error', function(err) {
     console.error('Reader error:', err);
     io.emit('error', { message: 'Reader error', error: err.message });
   });
 });
 
+/**
+ * Handle PC/SC instance errors
+ */
 pcscInstance.on('error', function(err) {
   console.error('PCSC error:', err);
   io.emit('error', { message: 'PCSC error', error: err.message });
 });
 
-// Socket.IO connection handling
+/**
+ * Handle new client connections
+ * Sends list of available readers to the client
+ */
 io.on('connection', (socket) => {
   isConnected = true;
   console.log('Client connected, ID:', socket.id);
@@ -228,7 +253,9 @@ io.on('connection', (socket) => {
     console.log('Available readers sent to client:', readerList);
   }
   
-  // Handle disconnection
+  /**
+   * Handle client disconnection
+   */
   socket.on('disconnect', (reason) => {
     console.log('Client disconnected, ID:', socket.id, 'Reason:', reason);
     console.log('Remaining connected clients:', io.engine.clientsCount);
@@ -239,18 +266,26 @@ io.on('connection', (socket) => {
     }
   });
   
-  // Handle errors
+  /**
+   * Handle socket errors
+   */
   socket.on('error', (error) => {
     console.error('Socket error:', error);
   });
 });
 
-// Handle server errors
+/**
+ * Handle server connection errors
+ */
 io.engine.on('connection_error', (err) => {
   console.error('Connection error:', err);
 });
 
-// API routes
+/**
+ * API endpoint to get list of available NFC readers
+ * @route GET /api/readers
+ * @returns {Object} JSON object with reader information
+ */
 app.get('/api/readers', (req, res) => {
   const readerList = Object.keys(readers);
   res.json({ 
@@ -261,6 +296,11 @@ app.get('/api/readers', (req, res) => {
   });
 });
 
+/**
+ * API endpoint to get server status
+ * @route GET /api/status
+ * @returns {Object} JSON object with server status information
+ */
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'running',
@@ -271,13 +311,17 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// Error handling middleware
+/**
+ * Error handling middleware
+ */
 app.use((err, req, res, next) => {
   console.error('Express error:', err);
   res.status(500).json({ error: err.message });
 });
 
-// Start server
+/**
+ * Start the server on the specified port
+ */
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, (err) => {
   if (err) {
@@ -290,7 +334,9 @@ server.listen(PORT, (err) => {
   console.log(`- GET http://localhost:${PORT}/api/status`);
 });
 
-// Handle server errors
+/**
+ * Handle server errors
+ */
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`Port ${PORT} is already in use. Please choose a different port or stop the other process.`);
@@ -300,7 +346,9 @@ server.on('error', (err) => {
   process.exit(1);
 });
 
-// Handle process termination
+/**
+ * Handle process termination
+ */
 process.on('SIGINT', () => {
   console.log('Shutting down server...');
   server.close(() => {

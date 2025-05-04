@@ -1,3 +1,9 @@
+/**
+ * @file UPassCollectionStats.js
+ * @description Component that provides visualizations and statistics for UPass distribution and usage
+ * @module views/UPassCollectionStats
+ */
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -8,6 +14,15 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
 } from 'recharts';
 
+/**
+ * UPass Collection Statistics Component
+ * Displays visual and numerical statistics about UPass distribution,
+ * including collection rates, disclaimer acceptance, and card replacement data
+ * across different academic semesters.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered UPass statistics dashboard
+ */
 const UPassCollectionStats = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -43,7 +58,14 @@ const UPassCollectionStats = () => {
     fetchData();
   }, [router]);
   
-  // Fetch data for all semesters
+  /**
+   * Fetches UPass data for all semesters from the database
+   * 
+   * @async
+   * @function fetchData
+   * @returns {Promise<void>} Promise that resolves when data has been fetched
+   * @throws {Error} If fetching data from any of the endpoints fails
+   */
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -79,16 +101,12 @@ const UPassCollectionStats = () => {
     }
   };
   
-  // Apply filters when semester changes
-  useEffect(() => {
-    if (currentData.length > 0 || fall2024Data.length > 0 || spring2024Data.length > 0) {
-      applyFilters();
-      // Increment chart key to force re-render of charts
-      setChartKey(prevKey => prevKey + 1);
-    }
-  }, [selectedSemester, currentData, fall2024Data, spring2024Data]);
-  
-  // Function to apply filters
+  /**
+   * Applies data filters based on the selected semester
+   * Updates the filteredData state with the appropriate dataset
+   * 
+   * @function applyFilters
+   */
   const applyFilters = () => {
     let data = [];
     
@@ -110,7 +128,21 @@ const UPassCollectionStats = () => {
     setFilteredData(data);
   };
   
-  // Generate pie chart data for U-Pass collection
+  // Apply filters when semester changes
+  useEffect(() => {
+    if (currentData.length > 0 || fall2024Data.length > 0 || spring2024Data.length > 0) {
+      applyFilters();
+      // Increment chart key to force re-render of charts
+      setChartKey(prevKey => prevKey + 1);
+    }
+  }, [selectedSemester, currentData, fall2024Data, spring2024Data]);
+  
+  /**
+   * Generates data for the UPass collection pie chart
+   * 
+   * @function generateUPassCollectionData
+   * @returns {Array<Object>} Array of objects with name, value, and percentage properties
+   */
   const generateUPassCollectionData = () => {
     const collectedCount = filteredData.filter(record => record.Active_U_Pass_Card).length;
     const notCollectedCount = filteredData.filter(record => !record.Active_U_Pass_Card).length;
@@ -125,7 +157,13 @@ const UPassCollectionStats = () => {
     ];
   };
   
-  // Generate pie chart data for disclaimer signed status
+  /**
+   * Generates data for the disclaimer signed status pie chart
+   * Handles different data formats for the Disclaimer_Signed field
+   * 
+   * @function generateDisclaimerSignedData
+   * @returns {Array<Object>} Array of objects with name, value, and percentage properties
+   */
   const generateDisclaimerSignedData = () => {
     // Handle different possible values for Disclaimer_Signed
     const signedCount = filteredData.filter(record => {
@@ -164,7 +202,13 @@ const UPassCollectionStats = () => {
     ];
   };
   
-  // Generate pie chart data for replacement status
+  /**
+   * Generates data for the UPass replacement status pie chart
+   * Tracks how many active UPass users have had their cards replaced
+   * 
+   * @function generateReplacementData
+   * @returns {Array<Object>} Array of objects with name, value, and percentage properties
+   */
   const generateReplacementData = () => {
     // Get the number of active U-Pass users
     const activeUPassUsers = filteredData.filter(record => record.Active_U_Pass_Card).length;
@@ -198,7 +242,15 @@ const UPassCollectionStats = () => {
     ];
   };
   
-  // Custom tooltip for pie chart
+  /**
+   * Custom tooltip component for pie charts
+   * 
+   * @function CustomTooltip
+   * @param {Object} props - Component props
+   * @param {boolean} props.active - Whether the tooltip is active
+   * @param {Array} props.payload - Data for the tooltip
+   * @returns {JSX.Element|null} Tooltip component or null if inactive
+   */
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -212,7 +264,20 @@ const UPassCollectionStats = () => {
     return null;
   };
   
-  // Custom label for pie chart
+  /**
+   * Custom label renderer for pie chart slices
+   * Displays percentage labels inside pie chart slices
+   * 
+   * @function renderCustomizedLabel
+   * @param {Object} props - Label properties
+   * @param {number} props.cx - Center X coordinate
+   * @param {number} props.cy - Center Y coordinate
+   * @param {number} props.midAngle - Middle angle of the slice in degrees
+   * @param {number} props.innerRadius - Inner radius of the slice
+   * @param {number} props.outerRadius - Outer radius of the slice
+   * @param {number} props.percent - Percentage value (0-1)
+   * @returns {JSX.Element} Text element with percentage
+   */
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
