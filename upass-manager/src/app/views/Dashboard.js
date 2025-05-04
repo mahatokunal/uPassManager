@@ -186,7 +186,18 @@ const Dashboard = () => {
         upassId: upassId
       }),
     })
-    .then(response => response.json())
+    .then(response => {
+      // First check if the response is ok
+      if (!response.ok) {
+        // If not ok, parse the JSON to get the error details
+        return response.json().then(errorData => {
+          // Throw an error with the detailed error message
+          throw new Error(errorData.error || errorData.message || 'Failed to allocate U-Pass');
+        });
+      }
+      // If ok, parse the JSON and return it
+      return response.json();
+    })
     .then(data => {
       console.log('Allocate U-Pass response:', data);
       
@@ -206,7 +217,21 @@ const Dashboard = () => {
     })
     .catch(err => {
       console.error('Error allocating U-Pass:', err);
-      setError(err.message || 'An error occurred while allocating U-Pass');
+      
+      // Format the error message to be more user-friendly
+      let userFriendlyError = err.message || 'An error occurred while allocating U-Pass';
+      
+      // Check if it's a duplicate entry error
+      if (userFriendlyError.includes('Duplicate entry') && userFriendlyError.includes('Active_U_Pass_Card')) {
+        // Extract the UPass ID from the error message if possible
+        const upassIdMatch = userFriendlyError.match(/'(\d+)'/);
+        const upassId = upassIdMatch ? upassIdMatch[1] : 'this UPass';
+        
+        userFriendlyError = `This UPass card (${upassId}) is already assigned to another student. Please use a different card.`;
+      }
+      
+      // Set the formatted error message
+      setError(userFriendlyError);
     })
     .finally(() => {
       setIsAllocatingUPass(false);
@@ -235,7 +260,8 @@ const Dashboard = () => {
       console.log('Update response:', data);
       
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to update disclaimer status');
+        // If the response is not ok, throw an error with the detailed error message
+        throw new Error(data.error || data.message || 'Failed to update disclaimer status');
       }
       
       // Refresh the data to get the updated record
@@ -257,7 +283,17 @@ const Dashboard = () => {
       setTimeout(() => setUpdateSuccess(false), 3000); // Hide success message after 3 seconds
     } catch (err) {
       console.error('Error updating disclaimer status:', err);
-      setError(err.message || 'An error occurred while updating disclaimer status');
+      
+      // Format the error message to be more user-friendly
+      let userFriendlyError = err.message || 'An error occurred while updating disclaimer status';
+      
+      // Make the error message more user-friendly
+      if (userFriendlyError.includes('database') || userFriendlyError.includes('SQL')) {
+        userFriendlyError = 'There was a problem updating the disclaimer status. Please try again later.';
+      }
+      
+      // Set the formatted error message
+      setError(userFriendlyError);
     } finally {
       setIsUpdatingDisclaimer(false);
       setIsDisclaimerModalOpen(false);
@@ -366,13 +402,26 @@ const Dashboard = () => {
                     const data = await response.json();
                     
                     if (!response.ok) {
-                      throw new Error(data.message || 'Failed to fetch student data');
+                      // If the response is not ok, throw an error with the detailed error message
+                      throw new Error(data.error || data.message || 'Failed to fetch student data');
                     }
                     
                     setSearchResult(data.data);
                   } catch (err) {
                     console.error('Error fetching student data:', err);
-                    setError(err.message || 'An error occurred while fetching student data');
+                    
+                    // Format the error message to be more user-friendly
+                    let userFriendlyError = err.message || 'An error occurred while fetching student data';
+                    
+                    // Make the error message more user-friendly
+                    if (userFriendlyError.includes('No record found')) {
+                      userFriendlyError = `No student record found for ID ${pid}. Please check the ID and try again.`;
+                    } else if (userFriendlyError.includes('database') || userFriendlyError.includes('SQL')) {
+                      userFriendlyError = 'There was a problem searching for the student. Please try again later.';
+                    }
+                    
+                    // Set the formatted error message
+                    setError(userFriendlyError);
                     setSearchResult(null);
                   } finally {
                     setIsLoading(false);
