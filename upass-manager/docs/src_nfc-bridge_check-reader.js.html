@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>src/nfc-bridge/check-reader.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/yourusername/upass-manager" target="_blank" >GitHub</a></h2><h3>Modules</h3><ul><li><a href="module-api_search-by-pid.html">api/search-by-pid</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-api_search-by-pid.html#~handler">handler</a></li></ul></li><li><a href="module-app_components_DisclaimerModal.html">app/components/DisclaimerModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_DisclaimerModal.html#~DisclaimerModal">DisclaimerModal</a></li></ul></li><li><a href="module-app_components_EditStudentModal.html">app/components/EditStudentModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_EditStudentModal.html#~EditStudentModal">EditStudentModal</a></li></ul></li><li><a href="module-app_components_Footer.html">app/components/Footer</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_Footer.html#~Footer">Footer</a></li></ul></li><li><a href="module-app_components_MessageTemplateModal.html">app/components/MessageTemplateModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_MessageTemplateModal.html#~MessageTemplateModal">MessageTemplateModal</a></li></ul></li><li><a href="module-app_components_NFCModal.html">app/components/NFCModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_NFCModal.html#~NFCModal">NFCModal</a></li></ul></li><li><a href="module-app_components_UploadModal.html">app/components/UploadModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_UploadModal.html#~UploadModal">UploadModal</a></li></ul></li><li><a href="module-app_components_ViewStudentModal.html">app/components/ViewStudentModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_ViewStudentModal.html#~ViewStudentModal">ViewStudentModal</a></li></ul></li><li><a href="module-app_components_VisualizationOptionsModal.html">app/components/VisualizationOptionsModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-app_components_VisualizationOptionsModal.html#~VisualizationOptionsModal">VisualizationOptionsModal</a></li></ul></li><li><a href="module-backend-api_db.html">backend-api/db</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_db.html#~executeQuery">executeQuery</a></li></ul></li><li><a href="module-backend-api_pages_api_get-all-records.html">backend-api/pages/api/get-all-records</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_get-all-records.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_pages_api_login.html">backend-api/pages/api/login</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_login.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_pages_api_message-templates.html">backend-api/pages/api/message-templates</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~createTemplate">createTemplate</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~deleteTemplate">deleteTemplate</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~getTemplates">getTemplates</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~handler">handler</a></li><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_message-templates.html#~updateTemplate">updateTemplate</a></li></ul></li><li><a href="module-backend-api_pages_api_send-notification.html">backend-api/pages/api/send-notification</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_send-notification.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_pages_api_update-student.html">backend-api/pages/api/update-student</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_pages_api_update-student.html#~handler">handler</a></li></ul></li><li><a href="module-backend-api_update-disclaimer.html">backend-api/update-disclaimer</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-api_update-disclaimer.html#~handler">handler</a></li></ul></li><li><a href="module-backend-common_auth.html">backend-common/auth</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-backend-common_auth.html#.authenticateUser">authenticateUser</a></li><li data-type='method' style='display: none;'><a href="module-backend-common_auth.html#.verifyToken">verifyToken</a></li></ul></li><li><a href="module-components_AddDistributorModal.html">components/AddDistributorModal</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-components_AddDistributorModal.html#~AddDistributorModal">AddDistributorModal</a></li><li data-type='method' style='display: none;'><a href="module-components_AddDistributorModal.html#~handleSubmit">handleSubmit</a></li></ul></li><li><a href="module-context_LoadingContext.html">context/LoadingContext</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-context_LoadingContext.html#.LoadingProvider">LoadingProvider</a></li><li data-type='method' style='display: none;'><a href="module-context_LoadingContext.html#.useLoading">useLoading</a></li></ul></li><li><a href="module-nfc-bridge_nfc-server.html">nfc-bridge/nfc-server</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-nfc-bridge_nfc-server.html#~bytesToHexString">bytesToHexString</a></li><li data-type='method' style='display: none;'><a href="module-nfc-bridge_nfc-server.html#~formatCardNumber">formatCardNumber</a></li><li data-type='method' style='display: none;'><a href="module-nfc-bridge_nfc-server.html#~getChecksum">getChecksum</a></li></ul></li><li><a href="module-views_Dashboard.html">views/Dashboard</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-views_Dashboard.html#~Dashboard">Dashboard</a></li></ul></li><li><a href="module-views_UPassCollectionStats.html">views/UPassCollectionStats</a><ul class='methods'><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~CustomTooltip">CustomTooltip</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~UPassCollectionStats">UPassCollectionStats</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~applyFilters">applyFilters</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~fetchData">fetchData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~generateDisclaimerSignedData">generateDisclaimerSignedData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~generateReplacementData">generateReplacementData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~generateUPassCollectionData">generateUPassCollectionData</a></li><li data-type='method' style='display: none;'><a href="module-views_UPassCollectionStats.html#~renderCustomizedLabel">renderCustomizedLabel</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#Header">Header</a></li><li><a href="global.html#HeaderProps">HeaderProps</a></li><li><a href="global.html#allocateUpass">allocateUpass</a></li><li><a href="global.html#maskPid">maskPid</a></li><li><a href="global.html#pcsc">pcsc</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">src/nfc-bridge/check-reader.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * NFC Reader Check Script
+ * 
+ * This script checks if an NFC card reader is properly recognized by the system.
+ * It doesn't start the full NFC bridge server, but just initializes the PC/SC middleware
+ * and lists the available readers.
+ * 
+ * Usage: node check-reader.js
+ */
+
+const pcsc = require('pcsclite');
+
+// ANSI color codes for terminal output
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+};
+
+console.log(`${colors.bright}${colors.magenta}=== NFC Reader Check ====${colors.reset}\n`);
+console.log(`${colors.cyan}Initializing PC/SC middleware...${colors.reset}`);
+
+// Initialize PC/SC
+let pcscInstance;
+try {
+  pcscInstance = pcsc();
+  console.log(`${colors.green}PC/SC initialized successfully${colors.reset}`);
+} catch (error) {
+  console.error(`${colors.red}Failed to initialize PC/SC:${colors.reset} ${error.message}`);
+  console.error(`${colors.yellow}Make sure PC/SC drivers are installed and the PC/SC service is running${colors.reset}`);
+  process.exit(1);
+}
+
+// Store active readers
+const readers = {};
+
+// Handle PC/SC reader events
+pcscInstance.on('reader', function(reader) {
+  console.log(`${colors.green}Reader detected:${colors.reset} ${reader.name}`);
+  
+  // Store reader
+  readers[reader.name] = reader;
+  
+  // Check if it's an ACS reader
+  if (reader.name.includes('ACS')) {
+    console.log(`${colors.green}✓ This is an ACS reader, which is fully supported by the NFC bridge${colors.reset}`);
+  } else {
+    console.log(`${colors.yellow}⚠ This is not an ACS reader. It may still work, but is not officially supported${colors.reset}`);
+  }
+  
+  // Set up event handlers
+  reader.on('status', function(status) {
+    const changes = this.state ^ status.state;
+    
+    // Card removed
+    if ((changes &amp; this.SCARD_STATE_EMPTY) &amp;&amp; (status.state &amp; this.SCARD_STATE_EMPTY)) {
+      console.log(`${colors.yellow}Card removed from reader${colors.reset}`);
+    }
+    
+    // Card inserted
+    if ((changes &amp; this.SCARD_STATE_PRESENT) &amp;&amp; (status.state &amp; this.SCARD_STATE_PRESENT)) {
+      console.log(`${colors.green}Card detected!${colors.reset} Try to connect...`);
+      
+      // Connect to card
+      reader.connect({ share_mode: this.SCARD_SHARE_SHARED }, function(err, protocol) {
+        if (err) {
+          console.error(`${colors.red}Error connecting to card:${colors.reset} ${err.message}`);
+          return;
+        }
+        
+        console.log(`${colors.green}Successfully connected to card${colors.reset}`);
+        console.log(`${colors.green}Protocol:${colors.reset} ${protocol}`);
+        
+        // Command to get UID
+        const command = Buffer.from([0xFF, 0xCA, 0x00, 0x00, 0x00]);
+        
+        // Send command to card
+        reader.transmit(command, 16, protocol, function(err, data) {
+          if (err) {
+            console.error(`${colors.red}Error transmitting to card:${colors.reset} ${err.message}`);
+            return;
+          }
+          
+          console.log(`${colors.green}Successfully read card data${colors.reset}`);
+          console.log(`${colors.cyan}Raw data:${colors.reset} ${Buffer.from(data).toString('hex').toUpperCase()}`);
+          
+          // Disconnect from card
+          reader.disconnect(reader.SCARD_LEAVE_CARD, function(err) {
+            if (err) {
+              console.error(`${colors.red}Error disconnecting from card:${colors.reset} ${err.message}`);
+            } else {
+              console.log(`${colors.green}Successfully disconnected from card${colors.reset}`);
+            }
+          });
+        });
+      });
+    }
+    
+    this.state = status.state;
+  });
+  
+  reader.on('end', function() {
+    console.log(`${colors.yellow}Reader removed:${colors.reset} ${this.name}`);
+    delete readers[this.name];
+    
+    // Check if there are any readers left
+    if (Object.keys(readers).length === 0) {
+      console.log(`${colors.yellow}No readers available${colors.reset}`);
+    }
+  });
+  
+  reader.on('error', function(err) {
+    console.error(`${colors.red}Reader error:${colors.reset} ${err.message}`);
+  });
+});
+
+pcscInstance.on('error', function(err) {
+  console.error(`${colors.red}PCSC error:${colors.reset} ${err.message}`);
+});
+
+// Wait a bit and then check if any readers were detected
+setTimeout(() => {
+  const readerCount = Object.keys(readers).length;
+  
+  if (readerCount === 0) {
+    console.log(`\n${colors.yellow}No NFC readers detected after 3 seconds${colors.reset}`);
+    console.log(`${colors.yellow}Please make sure your NFC reader is properly connected${colors.reset}`);
+    console.log(`${colors.yellow}If you just connected it, please wait a few more seconds${colors.reset}`);
+  } else {
+    console.log(`\n${colors.green}${readerCount} NFC reader(s) detected${colors.reset}`);
+    console.log(`${colors.cyan}Your NFC reader is properly recognized by the system${colors.reset}`);
+    console.log(`${colors.cyan}You can now place an NFC card on the reader to test it${colors.reset}`);
+  }
+  
+  console.log(`\n${colors.dim}Press Ctrl+C to exit${colors.reset}`);
+}, 3000);
+
+// Handle process termination
+process.on('SIGINT', () => {
+  console.log(`\n${colors.bright}Exiting NFC reader check${colors.reset}`);
+  process.exit(0);
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Sun May 04 2025 17:56:37 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>
