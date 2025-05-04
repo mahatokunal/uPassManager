@@ -70,31 +70,56 @@ function getChecksum(value) {
 
 // Function to format card number (same as in the VBA code)
 function formatCardNumber(data) {
-  // Convert bytes to hex string (skip first byte and last two bytes)
-  const hexStr = bytesToHexString(data.slice(1, data.length - 2));
-  
-  // Convert hex to decimal
-  let longVal = 0n;
-  for (let i = 0; i < hexStr.length; i++) {
-    const hexDigit = hexStr.charAt(hexStr.length - 1 - i);
-    const decValue = BigInt(parseInt(hexDigit, 16));
-    longVal += decValue * (16n ** BigInt(i));
-  }
-  
-  // Convert to string and pad with leading zeros
-  let longStr = longVal.toString();
-  while (longStr.length < 15) {
-    longStr = '0' + longStr;
-  }
-  
-  // Return empty string if all zeros
-  if (longStr === '000000000000000') {
+  try {
+    // Check if data is valid
+    if (!data || !data.length || data.length < 3) {
+      console.error('Invalid data received:', data);
+      return '';
+    }
+    
+    // Convert bytes to hex string (skip first byte and last two bytes)
+    // Make sure we don't go out of bounds
+    const startIndex = Math.min(1, data.length - 1);
+    const endIndex = Math.max(startIndex, data.length - 2);
+    const hexStr = bytesToHexString(data.slice(startIndex, endIndex));
+    
+    // Check if hexStr is valid
+    if (!hexStr || hexStr.length === 0) {
+      console.error('Invalid hex string:', hexStr);
+      return '';
+    }
+    
+    // Convert hex to decimal
+    let longVal = 0n;
+    for (let i = 0; i < hexStr.length; i++) {
+      const hexDigit = hexStr.charAt(hexStr.length - 1 - i);
+      // Make sure hexDigit is a valid hex character
+      if (!/^[0-9A-F]$/i.test(hexDigit)) {
+        console.error('Invalid hex digit:', hexDigit);
+        continue;
+      }
+      const decValue = BigInt(parseInt(hexDigit, 16));
+      longVal += decValue * (16n ** BigInt(i));
+    }
+    
+    // Convert to string and pad with leading zeros
+    let longStr = longVal.toString();
+    while (longStr.length < 15) {
+      longStr = '0' + longStr;
+    }
+    
+    // Return empty string if all zeros
+    if (longStr === '000000000000000') {
+      return '';
+    }
+    
+    // Add prefix and checksum
+    longStr = '0167' + longStr;
+    return longStr + getChecksum(longStr);
+  } catch (error) {
+    console.error('Error formatting card number:', error);
     return '';
   }
-  
-  // Add prefix and checksum
-  longStr = '0167' + longStr;
-  return longStr + getChecksum(longStr);
 }
 
 // Handle PC/SC reader events

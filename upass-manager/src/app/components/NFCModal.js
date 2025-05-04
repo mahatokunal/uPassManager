@@ -90,13 +90,18 @@ const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
       // Reader disconnected
       socket.on('readerDisconnected', (data) => {
         console.log('Reader disconnected:', data.name);
-        setReaders(prev => prev.filter(reader => reader !== data.name));
-        
-        if (readers.length === 0) {
-          setStatusMessage('No NFC readers detected. Please connect an NFC reader.');
-        } else {
-          setStatusMessage(`NFC reader disconnected: ${data.name}`);
-        }
+        setReaders(prev => {
+          const updatedReaders = prev.filter(reader => reader !== data.name);
+          
+          // Use the updated readers array to set the status message
+          if (updatedReaders.length === 0) {
+            setStatusMessage('No NFC readers detected. Please connect an NFC reader.');
+          } else {
+            setStatusMessage(`NFC reader disconnected: ${data.name}`);
+          }
+          
+          return updatedReaders;
+        });
       });
       
       // Card detected
