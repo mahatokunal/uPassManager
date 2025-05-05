@@ -4,6 +4,39 @@ import React, { useState, useEffect, useRef } from 'react';
 import { maskPid } from '../utils/maskPid';
 import { io } from 'socket.io-client';
 
+/**
+ * @typedef {Object} StudentInfo
+ * @property {string} Student_ID - Student's unique identifier
+ * @property {string} First_Name - Student's first name
+ * @property {string} Last_Name - Student's last name
+ * @property {string} Email - Student's email address
+ * @property {string} [Active_U_Pass_Card] - Student's current active U-Pass card number (if any)
+ */
+
+/**
+ * Modal component for allocating or replacing U-Pass cards using NFC technology
+ * 
+ * This component connects to a local NFC bridge server via WebSocket,
+ * listens for card scan events, and allows for allocation or replacement
+ * of U-Pass cards to students.
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is visible
+ * @param {Function} props.onClose - Callback function when modal is closed
+ * @param {Function} props.onConfirm - Callback function when U-Pass allocation is confirmed
+ * @param {StudentInfo} props.studentInfo - Information about the student receiving the U-Pass
+ * 
+ * @returns {JSX.Element|null} The modal component or null if not open
+ * 
+ * @example
+ * <NFCModal 
+ *   isOpen={modalOpen}
+ *   onClose={() => setModalOpen(false)}
+ *   onConfirm={handleAllocateUPass}
+ *   studentInfo={selectedStudent}
+ * />
+ */
 const NFCModal = ({ isOpen, onClose, onConfirm, studentInfo }) => {
   const [upassId, setUpassId] = useState('');
   const [error, setError] = useState(null);

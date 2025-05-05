@@ -1,157 +1,163 @@
-# U-Pass Manager Project
+# UPass Manager
 
-## Overview
-The U-Pass Manager project is a comprehensive, cloud-based solution designed to modernize the distribution of U-Pass cards at our university. By automating data ingestion, eligibility verification, and pass allocation, this application replaces manual, error-prone processes with a streamlined, secure, and efficient system that delivers real-time updates and analytics.
+## Project Overview
+UPass Manager is a comprehensive system developed for Virginia Tech University to streamline the management of student transit passes. This application allows administrators to issue UPass cards, track their distribution, manage student data, and provide real-time analytics on usage patterns.
 
-## Features
+## System Architecture
+The UPass Manager uses a modern microservices architecture:
 
-- **Data Collection and Cloud Infrastructure Setup**  
-  Configure a scalable cloud infrastructure (using AWS, Azure, etc.) to host the application, ingest and validate student data, and ensure robust logging, monitoring, and automated backups.
+- **Frontend**: Next.js React application with server-side rendering
+- **Backend API**: Node.js REST API endpoints
+- **Database**: MySQL RDS database for student and UPass records
+- **Authentication**: JWT-based authentication system with role-based access control
+- **AWS Integration**: 
+  - S3 for file storage
+  - Lambda for serverless processing of data and notifications
+  - SES for email notifications
 
-- **Secure Login and Role-Based Access**  
-  Implement multi-factor authentication and role-based access controls to ensure that distributors and administrators can securely log in and manage system functionalities.
+![Architecture Diagram](docs/images/architecture-diagram.png)
 
-- **Eligibility Check**  
-  Verify student eligibility in real time using daily data updates, ensuring that only qualified students receive a U-Pass.
+## Key Features
 
-- **NFC/QR Code Scanning and Pass Allocation**  
-  Enable distributors to quickly scan NFC or QR codes to allocate U-Pass cards to student records, reducing manual errors and improving efficiency.
+### UPass Management
+- Issue and track UPass cards to students
+- Process replacements for lost/damaged cards
+- Track Metro account linkage
+- Record distribution dates and pickup information
 
-- **Realtime Notification Service**  
-  Automatically send notifications to students when their U-Pass is ready for pickup, deactivated, or when their eligibility status changes.
+### User Management
+- Role-based access (Admin and Distributor roles)
+- Secure authentication and authorization
+- User activity tracking
 
-- **Data Analytics and Dashboard**  
-  Provide administrators with detailed insights and visualizations of U-Pass usage trends, along with data export capabilities (e.g., Excel) for external reporting.
+### Data Visualization
+- Real-time dashboard with UPass distribution statistics
+- Visual representation of data with charts and graphs
+- Exportable reports for administrative purposes
 
-- **Testing and Maintenance**  
-  Integrate comprehensive end-to-end and regression testing, along with continuous monitoring and maintenance practices, to ensure system stability and prompt issue resolution.
+### NFC Integration
+- Read card data directly using NFC readers
+- Streamline student identification and verification
+- Update card status in real-time
 
-## User Roles
+### Notification System
+- Send batch notifications to students
+- Custom notification templates
+- Email notification tracking
 
-- **Student (Sam)**  
-  A full-time college student who relies on public transportation. Sam benefits from a quick, NFC/QR-enabled U-Pass collection process and receives timely notifications for any changes in his pass status.
+### Export Functionality
+- Export data in multiple formats (Excel, CSV)
+- Customizable export templates
+- Data filtering options
 
-- **Distributor (Dana)**  
-  Responsible for daily U-Pass issuance, Dana uses the secure U-Pass manager portal to allocate passes via NFC/QR scanning. She also updates student eligibility statuses and ensures students are promptly notified when their passes are ready.
+## Technology Stack
 
-- **Administrator (Alex)**  
-  Overseeing the entire U-Pass distribution process, Alex has full access rights to manage user roles, view detailed analytics, and export comprehensive reports (e.g., for WMATA). He also ensures that student data is consistently updated in the cloud.
+### Frontend
+- **Next.js**: React framework with server-side rendering
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Context API**: State management
+- **Chart.js**: Data visualization
 
-## Installation & Deployment
+### Backend
+- **Node.js**: JavaScript runtime environment
+- **Express.js**: Web application framework
+- **MySQL**: Relational database
+- **AWS SDK**: Integration with AWS services
 
-1. **Clone the Repository**
+### Cloud Services
+- **AWS Lambda**: Serverless computing
+- **Amazon RDS**: Managed relational database service
+- **Amazon S3**: Object storage service
+- **Amazon SES**: Email service
+
+### Development Tools
+- **Git**: Version control
+- **ESLint**: Code linting
+- **Jest**: Testing framework
+
+## Installation and Setup
+
+### Prerequisites
+- Node.js (v16.x or higher)
+- npm (v7.x or higher)
+- MySQL (v8.x)
+- AWS account with configured services
+
+### Local Development Setup
+
+1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/upass-manager.git
+   git clone https://github.com/virginia-tech/upass-manager.git
    cd upass-manager
    ```
 
-2. **Install Dependencies**
+2. Install dependencies:
    ```bash
+   # Install main project dependencies
+   npm install
+   
+   # Install backend API dependencies
+   cd upass-manager/backend-api
+   npm install
+   
+   # Install NFC bridge dependencies
+   cd ../src/nfc-bridge
    npm install
    ```
 
-3. **Set Up Environment Variables**
-   Create a `.env` file in the root directory with the following variables:
-   ```
-   DB_HOST=your_database_host
-   DB_USER=your_database_user
-   DB_PASSWORD=your_database_password
-   DB_DATABASE=your_database_name
-   DB_PORT=your_database_port
-   ```
+3. Configure environment variables:
+   - Create a `.env` file in the root directory
+   - Create a `.env` file in the `backend-api` directory
+   - Add the necessary environment variables (see `.env.example` files)
 
-4. **Start the Development Server**
+4. Start the development servers:
    ```bash
+   # Start the Next.js frontend
    npm run dev
-   ```
-
-## NFC Integration
-
-The U-Pass Manager includes integration with NFC card readers to streamline the U-Pass allocation process. This feature allows distributors to quickly scan U-Pass cards and automatically fill in the card number.
-
-For a detailed explanation of the NFC integration architecture and data flow, see [ARCHITECTURE.md](src/nfc-bridge/ARCHITECTURE.md).
-
-### Setting Up NFC Support
-
-1. **Run the NFC Setup Script**
-   ```bash
-   npm run setup-nfc
-   ```
-   or
-   ```bash
-   node setup-nfc.js
-   ```
-   This script will install all necessary dependencies for both the main application and the NFC bridge server.
-
-2. **Start the NFC Bridge Server**
-   ```bash
-   cd src/nfc-bridge
+   
+   # In another terminal, start the backend API
+   cd backend-api
    npm start
+   
+   # If using NFC functionality, start the NFC bridge
+   cd ../src/nfc-bridge
+   node nfc-server.js
    ```
 
-3. **Start the Main Application (in a separate terminal)**
-   ```bash
-   npm run dev
-   ```
+5. Access the application:
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8080
 
-4. **Connect an NFC Card Reader**
-   Connect your NFC card reader to your computer. The NFC bridge server will automatically detect it.
+### Production Deployment
 
-5. **Using NFC in the Application**
-   - Log in as a distributor
-   - Search for a student by PID
-   - Click "Allocate U-Pass"
-   - Place the U-Pass card near the NFC reader
-   - The card number will be automatically filled in
-   - Click "Allocate U-Pass" to complete the process
+For production deployment, see the [Deployment Guide](docs/Deployment.md).
 
-### Supported NFC Readers
+## User Roles
 
-The NFC integration is designed to work with ACS (Advanced Card Systems) NFC readers, but may work with other PC/SC compatible readers as well.
+### Administrator
+- Full access to all system features
+- Manage distributors and system settings
+- View all analytics and reports
+- Configure notification templates
+- Import and export all data
 
-### Updating NFC Support
+### Distributor
+- Issue UPass cards to students
+- Update student information
+- View basic analytics
+- Send notifications to students
+- Limited export capabilities
 
-To update the NFC integration to the latest version:
+## Contributing
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-```bash
-npm run update-nfc
-```
-or
-```bash
-node update-nfc.js
-```
+## License
+This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-This script will:
-1. Pull the latest changes from the repository (if it's a git repository)
-2. Update dependencies for both the main application and the NFC bridge server
-3. Optionally check if your NFC reader is properly recognized
-4. Optionally start both servers
+## Acknowledgments
+- Virginia Tech Department of Transportation
+- The Next.js team
+- All contributors to the project
 
-### Uninstalling NFC Support
-
-If you no longer need the NFC integration, you can uninstall it:
-
-```bash
-npm run uninstall-nfc
-```
-or
-```bash
-node uninstall-nfc.js
-```
-
-This script will:
-1. Remove the NFC bridge directory
-2. Remove NFC-related dependencies from package.json
-3. Remove NFC-related scripts from package.json
-4. Update the NFCModal component to remove NFC integration
-5. Run npm install to update dependencies
-
-### Troubleshooting
-
-If you encounter issues with the NFC integration, see the [Troubleshooting Guide](src/nfc-bridge/TROUBLESHOOTING.md) for solutions to common problems.
-
-For more information about the NFC integration, see the [NFC Bridge README](src/nfc-bridge/README.md) and [Architecture Documentation](src/nfc-bridge/ARCHITECTURE.md).
-
-## Contributors
-
-This project is maintained by the U-Pass Manager Contributors. See [CONTRIBUTING.md](CONTRIBUTING.md) for a full list of contributors.
+## Contact
+For any questions or support, please contact the project team at [gettingaround@vt.edu](mailto:gettingaround@vt.edu).

@@ -1,6 +1,28 @@
 // backend-api/pages/api/get-all-records.js
 import pool from '../../db';
 
+/**
+ * API handler to retrieve paginated and filtered student records
+ * 
+ * @async
+ * @function handler
+ * @param {object} req - The HTTP request object
+ * @param {object} req.query - Query parameters
+ * @param {number} [req.query.page=1] - Page number for pagination
+ * @param {number} [req.query.limit=10] - Number of records per page
+ * @param {string} [req.query.table='u_pass_manager_current'] - Database table to query
+ * @param {string} [req.query.Student_ID] - Filter by Student ID
+ * @param {string} [req.query.First_Name] - Filter by First Name
+ * @param {string} [req.query.Last_Name] - Filter by Last Name
+ * @param {string} [req.query.Email] - Filter by Email
+ * @param {string} [req.query.Active_U_Pass_Card] - Filter by Active U-Pass Card status
+ * @param {string} [req.query.Disclaimer_Signed] - Filter by Disclaimer Signed status
+ * @param {string} [req.query.Metro_Acct] - Filter by Metro Account
+ * @param {string} [req.query.Distribution_Date] - Filter by Distribution Date
+ * @param {string} [req.query.Picked_Up_By] - Filter by Picked Up By
+ * @param {object} res - The HTTP response object
+ * @returns {object} JSON response containing records and pagination metadata
+ */
 export default async function handler(req, res) {
   let connection;
   

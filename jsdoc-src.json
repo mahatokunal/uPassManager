@@ -1,0 +1,31 @@
+{
+  "source": {
+    "include": [
+      "upass-manager/src"
+    ],
+    "exclude": [
+      "node_modules",
+      ".next"
+    ],
+    "includePattern": ".+\\.js(x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [
+    "plugins/markdown",
+    "node_modules/better-docs/component"
+  ],
+  "tags": {
+    "allowUnknownTags": ["component"]
+  },
+  "opts": {
+    "destination": "./docs/src",
+    "recurse": true,
+    "readme": "README.md",
+    "template": "node_modules/better-docs"
+  },
+  "templates": {
+    "better-docs": {
+      "name": "UPass Manager Source Documentation"
+    }
+  }
+}

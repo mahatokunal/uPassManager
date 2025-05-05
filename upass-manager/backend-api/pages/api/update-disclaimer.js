@@ -1,6 +1,47 @@
 // backend-api/pages/api/update-disclaimer.js
 import pool from '../../db';
 
+/**
+ * API handler to update the disclaimer signed status for a student
+ * 
+ * This endpoint updates the Disclaimer_Signed field to true (1) for a student record
+ * in the current U-Pass database table based on the provided PID (Student_ID).
+ * 
+ * @async
+ * @function handler
+ * @param {object} req - The HTTP request object
+ * @param {object} req.body - Request body
+ * @param {string} req.body.pid - The 9-digit PID (Student ID) to update
+ * @param {object} res - The HTTP response object
+ * @returns {Promise<object>} JSON response with success or error message
+ * 
+ * @example
+ * // Request
+ * // POST /api/update-disclaimer
+ * // {
+ * //   "pid": "123456789"
+ * // }
+ * 
+ * @example
+ * // Success response
+ * // {
+ * //   "message": "Disclaimer status updated successfully",
+ * //   "success": true
+ * // }
+ * 
+ * @example
+ * // Not Found response
+ * // {
+ * //   "message": "No record found for the provided PID"
+ * // }
+ * 
+ * @example
+ * // Already signed response
+ * // {
+ * //   "message": "Record found but not updated. May already be signed.",
+ * //   "success": true
+ * // }
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });

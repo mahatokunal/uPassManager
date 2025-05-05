@@ -1,3 +1,18 @@
+/**
+ * NFC Bridge Server for UPass Manager
+ * 
+ * This module provides a bridge between NFC card readers and the UPass Manager application.
+ * It enables reading NFC cards (specifically UPass cards) and formatting the data into
+ * standardized UPass card numbers that can be used by the main application.
+ * 
+ * Key features:
+ * - Express server for REST API endpoints
+ * - Socket.IO for real-time communication with clients
+ * - PC/SC integration for NFC card reader access
+ * - Card data formatting and validation
+ * 
+ * @module nfc-bridge/nfc-server
+ */
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -45,6 +60,19 @@ function bytesToHexString(bytes) {
 }
 
 // Function to calculate checksum (same as in the VBA code)
+/**
+ * Calculates a checksum for a numeric value based on a specific algorithm
+ * 
+ * This function calculates a checksum digit for U-Pass card identification
+ * using the same algorithm as the VBA code. It applies a delta array to 
+ * specific digits and calculates a final checksum value.
+ * 
+ * @param {string} value - The numeric string to calculate checksum for
+ * @returns {number} A single digit checksum value (0-9)
+ * 
+ * @example
+ * getChecksum("0167000000123456789"); // Returns a checksum digit
+ */
 function getChecksum(value) {
   const delta = [0, 1, 2, 3, 4, -4, -3, -2, -1, 0];
   let sum = 0;
@@ -69,6 +97,19 @@ function getChecksum(value) {
 }
 
 // Function to format card number (same as in the VBA code)
+/**
+ * Formats the raw data from an NFC card into a standard U-Pass card number format
+ * 
+ * This function processes the byte data read from an NFC card and converts it into
+ * a properly formatted U-Pass card number, including the prefix and checksum.
+ * 
+ * @param {Uint8Array|Array} data - Raw binary data from the NFC card
+ * @returns {string} Formatted U-Pass card number or empty string if invalid
+ * 
+ * @example
+ * // Returns a formatted 20-digit U-Pass number or empty string
+ * formatCardNumber(new Uint8Array([0x04, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC]));
+ */
 function formatCardNumber(data) {
   try {
     // Check if data is valid
