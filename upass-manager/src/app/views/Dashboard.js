@@ -75,7 +75,7 @@ const Dashboard = () => {
     },
     {
       title: "Upload File",
-      description: "This option is only accessible to Distributors who can upload files for processing.",
+      description: "This option is only accessible to admins who can upload files for processing.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@ const Dashboard = () => {
     },
     {
       title: "Send Notification",
-      description: "Send notifications to students about their U-Pass status. This option has a view of students.",
+      description: "Send notifications to students about their U-Pass status. You can also view and edit specific fields of a student.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -134,11 +134,11 @@ const Dashboard = () => {
           />
         </svg>
       ),
-      bgColor: "var(--upload-file-color)",
+      bgColor: "var(--export-data-color)",
     },
     {
       title: "Visualize Data",
-      description: "View student data visualizations by semester, month, and day.",
+      description: "View student data visualizations by semester, month and week.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +155,7 @@ const Dashboard = () => {
           />
         </svg>
       ),
-      bgColor: "var(--notification-color)",
+      bgColor: "var(--visualize-data-color)",
     },
   ];
 

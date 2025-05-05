@@ -4,7 +4,9 @@
     --text-color: #171717;
     --title-color: #171717;
     --background-color: #ffffff;
-    --distributor-add-color: #081950;
-    --upload-file-color: #045240;
-    --notification-color: #D35400;
+    --distributor-add-color: #085022;
+    --upload-file-color: #524404;
+    --notification-color: #d20202;
+    --export-data-color: #081950;
+    --visualize-data-color: #d3cf00;
   }

@@ -627,6 +627,9 @@ const Notifications = () => {
                       <span className="ml-2">Select</span>
                     </div>
                   </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                   {columnDefs.map(column => (
                     visibleColumns[column.key] && (
                       <th 
@@ -638,15 +641,12 @@ const Notifications = () => {
                       </th>
                     )
                   ))}
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={Object.values(visibleColumns).filter(Boolean).length + 1} className="px-6 py-4 text-center">
+                    <td colSpan={Object.values(visibleColumns).filter(Boolean).length + 2} className="px-6 py-4 text-center">
                       <div className="flex justify-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#861F41]"></div>
                       </div>
@@ -655,7 +655,7 @@ const Notifications = () => {
                   </tr>
                 ) : records.length === 0 ? (
                   <tr>
-                    <td colSpan={Object.values(visibleColumns).filter(Boolean).length + 1} className="px-6 py-4 text-center text-sm text-gray-500">
+                    <td colSpan={Object.values(visibleColumns).filter(Boolean).length + 2} className="px-6 py-4 text-center text-sm text-gray-500">
                       No records found
                     </td>
                   </tr>
@@ -669,6 +669,32 @@ const Notifications = () => {
                           checked={selectedRecords.includes(record.Email)}
                           onChange={() => handleSelectRecord(record.Email)}
                         />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end space-x-2">
+                          {/* View button */}
+                          <button
+                            onClick={() => handleViewStudent(record)}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="View Student Record"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </button>
+                          
+                          {/* Edit button */}
+                          <button
+                            onClick={() => handleEditStudent(record)}
+                            className="text-[#861F41] hover:text-[#6e1935] transition"
+                            title="Edit Student Record"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        </div>
                       </td>
                       {visibleColumns.Student_ID && (
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -757,32 +783,6 @@ const Notifications = () => {
                           {record.U_Pass_ID || 'None'}
                         </td>
                       )}
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
-                          {/* View button */}
-                          <button
-                            onClick={() => handleViewStudent(record)}
-                            className="text-blue-600 hover:text-blue-800 transition"
-                            title="View Student Record"
-                          >
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          </button>
-                          
-                          {/* Edit button */}
-                          <button
-                            onClick={() => handleEditStudent(record)}
-                            className="text-[#861F41] hover:text-[#6e1935] transition"
-                            title="Edit Student Record"
-                          >
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
                     </tr>
                   ))
                 )}
