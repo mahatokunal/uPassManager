@@ -115,7 +115,7 @@ For production deployment instructions, please see the [Deployment Guide](../doc
 
 ## Documentation
 
-- [User Guide](../wiki/UserGuide.md) - Instructions for end users
+- [User Guide](../wiki/UserManual.pdf) - Instructions for end users
 - [API Documentation](../wiki/API.md) - API endpoints and usage
 - [System Architecture](../wiki/Architecture.md) - Detailed system architecture
 - [NFC Integration](src/nfc-bridge/ARCHITECTURE.md) - NFC bridge documentation
