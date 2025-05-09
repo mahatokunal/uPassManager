@@ -3,6 +3,53 @@ import pool, { executeQuery, withConnection } from '../../db';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import dotenv from 'dotenv';
 
+/**
+ * API handler to send email notifications using AWS Lambda
+ * 
+ * This endpoint invokes an AWS Lambda function (CS5934_G6_SES) that sends email
+ * notifications to specified recipients using Amazon SES.
+ * 
+ * @async
+ * @function handler
+ * @param {object} req - The HTTP request object
+ * @param {object} req.body - Request body
+ * @param {string[]} req.body.recipients - Array of email addresses to send to
+ * @param {string} req.body.subject - Email subject line
+ * @param {string} req.body.message - Email body content
+ * @param {object} res - The HTTP response object
+ * @returns {Promise<object>} JSON response with success or error message
+ * 
+ * @example
+ * // Request
+ * // POST /api/send-notification
+ * // {
+ * //   "recipients": ["student1@example.com", "student2@example.com"],
+ * //   "subject": "Important U-Pass Information",
+ * //   "message": "Your U-Pass is ready for pickup at the campus center."
+ * // }
+ * 
+ * @example
+ * // Success response
+ * // {
+ * //   "message": "Notifications sent successfully via Lambda",
+ * //   "success": true,
+ * //   "sent": 2,
+ * //   "total": 2,
+ * //   "results": {
+ * //     "successful": ["student1@example.com", "student2@example.com"],
+ * //     "failed": []
+ * //   },
+ * //   "timestamp": "2025-05-01 14:30:45"
+ * // }
+ * 
+ * @example
+ * // Error response
+ * // {
+ * //   "message": "Failed to send notifications via Lambda",
+ * //   "error": "Error message from Lambda function"
+ * // }
+ */
+
 // Load environment variables from .env file
 dotenv.config();
 

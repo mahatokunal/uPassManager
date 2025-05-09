@@ -1,5 +1,17 @@
 import React from 'react';
 
+/**
+ * Footer component for the UPass Manager application
+ * 
+ * This component displays a consistent footer across all pages of the application,
+ * showing copyright information and Virginia Tech branding.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered Footer component
+ * 
+ * @example
+ * <Footer />
+ */
 const Footer = () => {
   return (
     <footer className="bg-[#861F41] text-white py-4 shadow-md">

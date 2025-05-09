@@ -1,6 +1,44 @@
 // backend-api/pages/api/search-by-pid.js
 import pool, { withConnection } from '../../db';
 
+/**
+ * API handler to search for a student record by their PID (Personal Identifier)
+ *
+ * This endpoint searches the current U-Pass database table for a student record
+ * matching the provided PID (Student_ID).
+ *
+ * @async
+ * @function handler
+ * @param {object} req - The HTTP request object
+ * @param {object} req.query - Query parameters
+ * @param {string} req.query.pid - The 9-digit PID (Student ID) to search for
+ * @param {object} res - The HTTP response object
+ * @returns {Promise<object>} JSON response containing the student record or error message
+ * 
+ * @example
+ * // Request: GET /api/search-by-pid?pid=123456789
+ * 
+ * @example
+ * // Success response:
+ * // {
+ * //   "message": "Record found",
+ * //   "data": {
+ * //     "Student_ID": "123456789",
+ * //     "First_Name": "John",
+ * //     "Last_Name": "Doe",
+ * //     "Email": "john.doe@example.com",
+ * //     "Active_U_Pass_Card": "1234567890",
+ * //     "Disclaimer_Signed": 1,
+ * //     ... other fields ...
+ * //   }
+ * // }
+ * 
+ * @example
+ * // Error response (no record found):
+ * // {
+ * //   "message": "No record found for the provided PID"
+ * // }
+ */
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });

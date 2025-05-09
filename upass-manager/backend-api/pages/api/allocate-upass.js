@@ -1,6 +1,52 @@
 // backend-api/pages/api/allocate-upass.js
 import pool from '../../db';
 
+/**
+ * API handler for allocating or replacing U-Pass cards for students
+ * 
+ * This endpoint validates the incoming request, checks if the student has signed
+ * the required disclaimer, and either allocates a new U-Pass or replaces an existing one.
+ * 
+ * @async
+ * @function allocateUPassHandler
+ * @param {Object} req - Next.js API request object
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.pid - Student's 9-digit personal identifier (PID)
+ * @param {string} req.body.upassId - The new U-Pass card number to allocate
+ * @param {Object} res - Next.js API response object
+ * @returns {Promise<Object>} JSON response with success or error message
+ * 
+ * @example
+ * // Request
+ * // POST /api/allocate-upass
+ * // {
+ * //   "pid": "123456789",
+ * //   "upassId": "01670000001234567893"
+ * // }
+ * 
+ * @example
+ * // Success response (new allocation)
+ * // {
+ * //   "message": "U-Pass allocated successfully",
+ * //   "success": true,
+ * //   "isReplacement": false
+ * // }
+ * 
+ * @example
+ * // Success response (replacement)
+ * // {
+ * //   "message": "U-Pass replaced successfully",
+ * //   "success": true,
+ * //   "isReplacement": true
+ * // }
+ * 
+ * @example
+ * // Error response (disclaimer not signed)
+ * // {
+ * //   "message": "Disclaimer must be signed before allocating a U-Pass",
+ * //   "disclaimerSigned": false
+ * // }
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });

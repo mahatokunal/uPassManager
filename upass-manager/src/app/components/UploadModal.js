@@ -1,5 +1,48 @@
 import React, { useState } from 'react';
 
+/**
+ * Modal component for file uploads in the UPass Manager application
+ * 
+ * This component provides a drag-and-drop interface for file uploads,
+ * with visual feedback during interactions and file selection.
+ * 
+ * @component
+ * @param {object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is visible
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Function} props.onFileChange - Callback function triggered when a file is selected
+ * @param {Function} props.onUpload - Callback function to handle file upload
+ * @param {File|null} props.selectedFile - Currently selected file object, if any
+ * @returns {JSX.Element|null} The rendered modal or null if closed
+ * 
+ * @example
+ * // Basic usage in a parent component
+ * const [isModalOpen, setIsModalOpen] = useState(false);
+ * const [selectedFile, setSelectedFile] = useState(null);
+ * 
+ * const handleFileChange = (e) => {
+ *   setSelectedFile(e.target.files[0]);
+ * };
+ * 
+ * const handleUpload = async () => {
+ *   if (!selectedFile) return;
+ *   // Upload logic here
+ *   setIsModalOpen(false);
+ * };
+ * 
+ * return (
+ *   <>
+ *     <button onClick={() => setIsModalOpen(true)}>Upload File</button>
+ *     <UploadModal
+ *       isOpen={isModalOpen}
+ *       onClose={() => setIsModalOpen(false)}
+ *       onFileChange={handleFileChange}
+ *       onUpload={handleUpload}
+ *       selectedFile={selectedFile}
+ *     />
+ *   </>
+ * );
+ */
 const UploadModal = ({ isOpen, onClose, onFileChange, onUpload, selectedFile }) => {
   const [dragging, setDragging] = useState(false);
 

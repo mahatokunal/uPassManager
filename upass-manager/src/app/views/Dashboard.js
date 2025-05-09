@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * Main dashboard component for the U-Pass Manager application
+ * 
+ * This is the primary interface for administrators and distributors to manage U-Pass cards.
+ * It provides functionality for searching students, managing distributors, uploading files,
+ * updating student information, allocating U-Pass cards using NFC, and accessing visualization tools.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered Dashboard component
+ */
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';

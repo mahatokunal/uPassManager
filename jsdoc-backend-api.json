@@ -1,0 +1,31 @@
+{
+  "source": {
+    "include": [
+      "upass-manager/backend-api"
+    ],
+    "exclude": [
+      "node_modules",
+      ".next"
+    ],
+    "includePattern": ".+\\.js(x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [
+    "plugins/markdown",
+    "node_modules/better-docs/component"
+  ],
+  "tags": {
+    "allowUnknownTags": ["component"]
+  },
+  "opts": {
+    "destination": "./docs/backend-api",
+    "recurse": true,
+    "readme": "README.md",
+    "template": "node_modules/better-docs"
+  },
+  "templates": {
+    "better-docs": {
+      "name": "UPass Manager Backend API Documentation"
+    }
+  }
+}

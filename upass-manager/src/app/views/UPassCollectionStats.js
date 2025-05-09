@@ -1,5 +1,24 @@
 "use client";
 
+/**
+ * @typedef {Object} UPassData
+ * @property {string} semester - The semester for the data (current, fall_2024, spring_2024)
+ * @property {number} total - Total number of students
+ * @property {number} collected - Number of students who have collected their U-Pass cards
+ * @property {number} remaining - Number of students who haven't collected their U-Pass cards
+ * @property {number} percentage - Percentage of students who have collected their U-Pass cards
+ */
+
+/**
+ * U-Pass Collection Statistics visualization component
+ * 
+ * This component displays pie charts showing the percentage of students who have
+ * collected their U-Pass cards for different semesters. It allows users to toggle
+ * between current, Fall 2024, and Spring 2024 data.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered UPassCollectionStats component
+ */
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';

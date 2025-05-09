@@ -1,7 +1,26 @@
 /**
- * Masks the last 4 digits of a PID number
- * @param {string} pid - The PID to mask
- * @returns {string} - The masked PID
+ * Masks a Personal Identifier (PID) for privacy and security purposes, showing
+ * only specific portions while hiding others.
+ * 
+ * @function maskPid
+ * @param {string|number} pid - The Personal Identifier to mask
+ * @returns {string} A masked version of the PID with some digits replaced by asterisks
+ * 
+ * @example
+ * // For PIDs 5 characters or longer - masks all except last 4 digits
+ * maskPid("123456789"); // Returns "12345****"
+ * 
+ * @example
+ * // For PIDs less than 5 characters - shows first character, masks the rest
+ * maskPid("1234"); // Returns "1***"
+ * 
+ * @example
+ * // Handles numeric input by converting to string
+ * maskPid(123456); // Returns "12****"
+ * 
+ * @example
+ * // Returns empty string for null/undefined input
+ * maskPid(); // Returns ""
  */
 export const maskPid = (pid) => {
   if (!pid) return '';

@@ -3,6 +3,57 @@
 import React from 'react';
 import { maskPid } from '../utils/maskPid';
 
+/**
+ * @typedef {Object} StudentInfo
+ * @property {string} Student_ID - Student's unique identifier (PID)
+ * @property {string} First_Name - Student's first name
+ * @property {string} Last_Name - Student's last name
+ * @property {string} Email - Student's email address
+ * @property {string} [Active_U_Pass_Card] - Currently active U-Pass card number, if any
+ * @property {string} [Replaced_U_Pass_Card] - Previously replaced U-Pass card number, if any
+ * @property {boolean} [Disclaimer_Signed] - Whether the student has signed the disclaimer
+ * @property {string} [Metro_Acct] - Metro account information, if available
+ * @property {string} [Distribution_Date] - Date when U-Pass was distributed
+ * @property {string} [Picked_Up_By] - Person who picked up the U-Pass
+ * @property {string} [U_Pass_ID] - Alternative U-Pass identifier
+ * @property {string} [Notes] - Additional notes about the student
+ */
+
+/**
+ * Modal component to view detailed student information
+ * 
+ * This component displays comprehensive information about a student in a modal dialog,
+ * including personal information, U-Pass status, and any notes associated with the record.
+ * The component uses the maskPid utility to partially mask the student's PID for privacy.
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is visible
+ * @param {Function} props.onClose - Callback function when modal is closed
+ * @param {StudentInfo} props.studentInfo - Complete student information object to display
+ * @returns {JSX.Element|null} The modal component or null if not open
+ * 
+ * @example
+ * // Basic usage in a parent component
+ * const [modalOpen, setModalOpen] = useState(false);
+ * const [selectedStudent, setSelectedStudent] = useState(null);
+ * 
+ * const handleViewStudent = (student) => {
+ *   setSelectedStudent(student);
+ *   setModalOpen(true);
+ * };
+ * 
+ * return (
+ *   <>
+ *     <button onClick={() => handleViewStudent(student)}>View Details</button>
+ *     <ViewStudentModal
+ *       isOpen={modalOpen}
+ *       onClose={() => setModalOpen(false)}
+ *       studentInfo={selectedStudent}
+ *     />
+ *   </>
+ * );
+ */
 const ViewStudentModal = ({ isOpen, onClose, studentInfo }) => {
   if (!isOpen) return null;
 
