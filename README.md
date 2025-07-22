@@ -15,8 +15,6 @@ The UPass Manager uses a modern microservices architecture:
   - Lambda for serverless processing of data and notifications
   - SES for email notifications
 
-![Architecture Diagram](docs/images/architecture-diagram.png)
-
 ## Key Features
 
 ### UPass Management
@@ -127,10 +125,6 @@ The UPass Manager uses a modern microservices architecture:
 5. Access the application:
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8080
-
-### Production Deployment
-
-For production deployment, see the [Deployment Guide](docs/Deployment.md).
 
 ## User Roles
 
